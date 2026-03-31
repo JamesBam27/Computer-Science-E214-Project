@@ -2,33 +2,33 @@ import stddraw
 from picture import Picture
 import math
 class Bullet:
-    def __init__(shot,x,y,a,v):
-        shot.x=x
-        shot.y =y
-        shot.a =a
-        shot.v =v
-    def shoot(shot):
-        vx = math.cos(shot.a) * shot.v
-        vy = math.sin(shot.a) *shot.v
-        shot.x = shot.x  +vx
-        shot.y = shot.y  +vy
-        stddraw.point(shot.x,shot.y)
+    def __init__(self,x,y,a,v):
+        self.x=x
+        self.y =y
+        self.a =a
+        self.v =v
+    def shoot(self):
+        vx = math.cos(self.a) * self.v
+        vy = math.sin(self.a) *self.v
+        self.x = self.x  +vx
+        self.y = self.y  +vy
+        stddraw.point(self.x,self.y)
 def curser(x,y,a):
     y = y + 0.015
     stddraw.line(x,y,x + math.cos(a)/10,y+math.sin(a)/10)
 class Shooter:
-    def __init__(player1,x,vx,shot,xs,ys,a,av,bullet):
-        player1.x = x
-        player1.vx = vx
-        player1.shot = shot
-        player1.xs = xs
-        player1.ys = ys
-        player1.a = a
-        player1.av = av
-        player1.bullet = bullet
+    def __init__(self,x,vx,shot,xs,ys,a,av,bullet):
+        self.x = x
+        self.vx = vx
+        self.shot = shot
+        self.xs = xs
+        self.ys = ys
+        self.a = a
+        self.av = av
+        self.bullet = bullet
 
-    def shooter(player1):
-        ship = Picture("ship2.gif")
+    def shooter(self):
+        ship = Picture("ship2.png")
         vxp = 0.005
         vxn = -0.005
         avp = 0.01
@@ -36,53 +36,55 @@ class Shooter:
         if stddraw.hasNextKeyTyped():
             key = stddraw.nextKeyTyped()
             if key == "d":
-                player1.vx = vxp
+                self.vx = vxp
             else:
                 if key == "a":
-                    player1.vx  =vxn
+                    self.vx  =vxn
                 else:
                     if key == "s":
-                        player1.vx = 0
+                        self.vx = 0
                     else:
                         if key =="x":
-                            return
+                            return True
                         else:
                             if key == " ":
-                                if not player1.shot:
-                                    player1.shot = True
-                                    player1.xs = player1.x
-                                    player1.bullet.x = player1.xs
-                                    player1.bullet.a = player1.a
+                                if not self.shot:
+                                    self.shot = True
+                                    self.xs = self.x
+                                    self.bullet.x = self.x
+                                    self.bullet.y = 0.15
+                                    self.bullet.a = self.a
 
                             else:
                                 if key == "e":
-                                    player1.av = avn
+                                    self.av = avn
                                 else:
                                     if key == "q":
-                                        player1.av  =avp
+                                        self.av  =avp
                                     else:
                                         if key == "w":
-                                            player1.av = 0
+                                            self.av = 0
+                                        
 
-        player1.a = player1.a  +player1.av
-        if not  0<player1.a<math.pi:
-            player1.av =-player1.av
-        curser(player1.x,0.15,player1.a)
-        if player1.shot:    
-            player1.bullet.shoot()
-            player1.xs= player1.bullet.x
-            player1.ys = player1.bullet.y
-        if not (0<player1.xs<1 and 0<player1.ys<1):
-            player1.shot = False
-            player1.bullet.y = 0.15
-            player1.bullet.x = 0.5
-            player1.xs = 0.5
-            player1.ys = 0.15
-
-        if player1.x <0 or player1.x>1:
-            player1.vx = -player1.vx
-        player1.x = player1.x + player1.vx
-        stddraw.picture(ship,player1.x,0.15,0.2,0.2)
+        self.a = self.a  +self.av
+        if not  0<self.a<math.pi:
+            self.av =-self.av
+        curser(self.x,0.15,self.a)
+        if self.shot:    
+            self.bullet.shoot()
+            self.xs= self.bullet.x
+            self.ys = self.bullet.y
+        if not (0<self.xs<1 and 0<self.ys<1):
+            self.shot = False
+            self.bullet.y = -1
+            self.bullet.x = -1
+            self.xs = -1
+            self.ys = -1
+		
+        if self.x <0 or self.x>1:
+            self.vx = -self.vx
+        self.x = self.x + self.vx
+        stddraw.picture(ship,self.x,0.15)
 def main():
     x = 0.5
     vx =0

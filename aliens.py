@@ -2,35 +2,38 @@ import stddraw
 import math
 from picture import Picture
 class Aliens:
-    def __init__(alienOne,x,y,vx,vy,xs,ys,blown,width,length):
-        alienOne.x= x
-        alienOne.y = y
-        alienOne.vx = vx
-        alienOne.vy = vy
-        alienOne.xs = xs
-        alienOne.ys = ys
-        alienOne.blown = blown
-        alienOne.width = width
-        alienOne.length = length
+    def __init__(self,x,y,vx,vy,xs,ys,blown,width,length):
+        self.x= x
+        self.y = y
+        self.vx = vx
+        self.vy = vy
+        self.xs = xs
+        self.ys = ys
+        self.blown = blown
+        self.width = width
+        self.length = length
 
-    def alien(alienOne):
+    def alien(self):
         alien = Picture("Alien.png")
-        blownPic = Picture("Blown.png")
-        if not 0+alienOne.length<alienOne.x<1-alienOne.width:
-            alienOne.vx = -alienOne.vx
-        if not alienOne.y<1:
-            alienOne.vy = -alienOne.vy
-        alienOne.x = alienOne.x + alienOne.vx
-        alienOne.y = alienOne.y + alienOne.vy
-        if (abs(alienOne.x-alienOne.xs)<0.05 and abs(alienOne.y - alienOne.ys)<0.05) or alienOne.blown:
-            stddraw.picture(blownPic,alienOne.x,alienOne.y,0.1,0.1)
-            alienOne.blown = True
+        if not 0+self.length<self.x<1-self.width:
+            self.vx = -self.vx
+        if not self.y<1:
+            self.vy = -self.vy
+        self.x = self.x + self.vx
+        self.y = self.y + self.vy
+        if (abs(self.x-self.xs)<0.05 and abs(self.y - self.ys)<0.05): # or self.blown:
+            self.x = 0.1
+            self.y=0.9
+            self.width = 0
+            self.length = 0
+            self.blown = True
         else:
-            stddraw.picture(alien,alienOne.x,alienOne.y,0.1,0.1)
-        if alienOne.y < 0 and not alienOne.blown:
+            stddraw.picture(alien,self.x,self.y)
+        if self.y < 0 and not self.blown:
             stddraw.setFontSize(30)
             stddraw.setPenColor(stddraw.RED)
             stddraw.text(0.5,0.5,"Game Over")
+            return True
 def main():
     xAlien = 0
     yAlien = 1

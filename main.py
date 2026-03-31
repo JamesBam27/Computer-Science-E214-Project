@@ -9,7 +9,9 @@ def main():
                 stddraw.clear()
                 break
         stddraw.show(10)
-    gameplay.playGame()
+    while gameplay.playGame():
+        stddraw.setPenColor(stddraw.BLACK)
+        stddraw.setFontSize(12)
 
 
 
