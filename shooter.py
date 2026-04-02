@@ -17,14 +17,12 @@ def curser(x,y,a):
     y = y + 0.015
     stddraw.line(x,y,x + math.cos(a)/10,y+math.sin(a)/10)
 class Shooter:
-    def __init__(self,x,vx,shot,xs,ys,a,av,bullet):
+    def __init__(self,x,vx,shot,a,av,bullet):
         self.x = x
         self.vx = vx
+        self.av =av
+        self.a =a
         self.shot = shot
-        self.xs = xs
-        self.ys = ys
-        self.a = a
-        self.av = av
         self.bullet = bullet
 
     def shooter(self):
@@ -50,10 +48,11 @@ class Shooter:
                             if key == " ":
                                 if not self.shot:
                                     self.shot = True
-                                    self.xs = self.x
-                                    self.bullet.x = self.x
-                                    self.bullet.y = 0.15
-                                    self.bullet.a = self.a
+                                    self.bullet[0].x = self.x
+                                    self.bullet[0].y = 0.15
+                                    self.bullet[0].a = self.a
+                                else:
+                                   self.bullet += [Bullet(self.x,0.15,self.a,0.05)]
 
                             else:
                                 if key == "e":
@@ -70,16 +69,12 @@ class Shooter:
         if not  0<self.a<math.pi:
             self.av =-self.av
         curser(self.x,0.15,self.a)
-        if self.shot:    
-            self.bullet.shoot()
-            self.xs= self.bullet.x
-            self.ys = self.bullet.y
-        if not (0<self.xs<1 and 0<self.ys<1):
-            self.shot = False
-            self.bullet.y = -1
-            self.bullet.x = -1
-            self.xs = -1
-            self.ys = -1
+        for i in self.bullet:   
+            if not (0<i.x<1 and 0<i.y<1):
+               i.y = -1
+               i.x = -1
+            else:
+                i.shoot()
 		
         if self.x <0 or self.x>1:
             self.vx = -self.vx

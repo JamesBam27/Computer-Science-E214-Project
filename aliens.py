@@ -2,16 +2,16 @@ import stddraw
 import math
 from picture import Picture
 class Aliens:
-    def __init__(self,x,y,vx,vy,xs,ys,blown,width,length):
+    def __init__(self,x,y,vx,vy,bullet,blown,width,length,shooter):
         self.x= x
         self.y = y
         self.vx = vx
         self.vy = vy
-        self.xs = xs
-        self.ys = ys
+        self.bullet = bullet
         self.blown = blown
         self.width = width
         self.length = length
+        self.shooter = shooter
 
     def alien(self):
         alien = Picture("Alien.png")
@@ -21,19 +21,21 @@ class Aliens:
             self.vy = -self.vy
         self.x = self.x + self.vx
         self.y = self.y + self.vy
-        if (abs(self.x-self.xs)<0.05 and abs(self.y - self.ys)<0.05): # or self.blown:
-            self.x = 0.1
-            self.y=0.9
-            self.width = 0
-            self.length = 0
-            self.blown = True
-        else:
-            stddraw.picture(alien,self.x,self.y)
-        if self.y < 0 and not self.blown:
+        for i in self.bullet:
+            if (abs(self.x-i.x)<0.05 and abs(self.y - i.y)<0.05): # or self.blown:
+                i.x = -1
+                i.y=-1
+                self.x = 0.1
+                self.y=0.9
+                self.width = 0
+                self.length = 0
+                self.blown = True
+        if (self.y < 0 or (abs(self.shooter.x-self.x)<0.05 and abs(0.15 - self.y)<0.05) ) and not self.blown:
             stddraw.setFontSize(30)
             stddraw.setPenColor(stddraw.RED)
             stddraw.text(0.5,0.5,"Game Over")
             return True
+        stddraw.picture(alien,self.x,self.y)
 def main():
     xAlien = 0
     yAlien = 1
