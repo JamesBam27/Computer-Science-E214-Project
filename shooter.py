@@ -17,13 +17,14 @@ def curser(x,y,a):
     y = y + 0.015
     stddraw.line(x,y,x + math.cos(a)/10,y+math.sin(a)/10)
 class Shooter:
-    def __init__(self,x,vx,shot,a,av,bullet):
+    def __init__(self,x,vx,shot,a,av,bullet,time):
         self.x = x
         self.vx = vx
         self.av =av
         self.a =a
         self.shot = shot
         self.bullet = bullet
+        self.time = time
 
     def shooter(self):
         ship = Picture("ship2.png")
@@ -45,7 +46,8 @@ class Shooter:
                         if key =="x":
                             return True
                         else:
-                            if key == " ":
+                            if key == " " and (self.time.time>40):
+                                self.time.time = 0 
                                 if not self.shot:
                                     self.shot = True
                                     self.bullet[0].x = self.x

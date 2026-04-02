@@ -5,8 +5,10 @@ import aliens
 import main
 import titlescreen
 import score
+import clock
 def playGame():
-    tally =score.scoreBoard() 
+    tally =score.scoreBoard()
+    time = clock.Clock(0) 
     x = 0.5
     vx =0
     xs = -1
@@ -15,7 +17,7 @@ def playGame():
     a = math.pi/2
     av =0
     bullet =[shooter.Bullet(xs,ys,a,0.05)]
-    playerone = shooter.Shooter(x,vx,shot,a,av,bullet)
+    playerone = shooter.Shooter(x,vx,shot,a,av,bullet,time)
     xAlien = 0.1
     yAlien = 0.9
     vAlien = 0.008
@@ -28,6 +30,7 @@ def playGame():
         aliensArr += [aliens.Aliens(xAlien+ 0.1*(i+1),yAlien - 0.1,vxAlien,vyAlien,bullet,False,0.3-0.1*i,0.1*i,playerone)]
     blown = False
     while True:
+        time.updateTime()
         stddraw.clear(stddraw.GREEN)
         tally.updateScore()
         if playerone.shooter():
