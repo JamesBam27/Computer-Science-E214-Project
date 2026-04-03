@@ -1,6 +1,10 @@
 import stddraw
 import math
 from picture import Picture
+import stdaudio
+import threading
+def play_gameover():
+    stdaudio.playFile("gameover")
 class Aliens:
     def __init__(self,x,y,vx,vy,bullet,blown,width,length,shooter):
         self.x= x
@@ -34,6 +38,7 @@ class Aliens:
             stddraw.setFontSize(30)
             stddraw.setPenColor(stddraw.RED)
             stddraw.text(0.5,0.5,"Game Over")
+            threading.Thread(target=play_gameover,daemon=True).start()
             return True
         stddraw.picture(alien,self.x,self.y)
 def main():

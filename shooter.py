@@ -1,6 +1,8 @@
 import stddraw
+import stdaudio
 from picture import Picture
 import math
+import threading
 class Bullet:
     def __init__(self,x,y,a,v):
         self.x=x
@@ -16,6 +18,8 @@ class Bullet:
 def curser(x,y,a):
     y = y + 0.015
     stddraw.line(x,y,x + math.cos(a)/10,y+math.sin(a)/10)
+def play_sound():
+    stdaudio.playFile("Lazer")
 class Shooter:
     def __init__(self,x,vx,shot,a,av,bullet,time):
         self.x = x
@@ -47,6 +51,7 @@ class Shooter:
                             return True
                         else:
                             if key == " " and (self.time.time>40):
+                                threading.Thread(target=play_sound).start()
                                 self.time.time = 0 
                                 if not self.shot:
                                     self.shot = True
