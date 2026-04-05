@@ -5,7 +5,9 @@ import aliens
 import main
 import titlescreen
 import score
+import random
 import clock
+import bombs
 def playGame():
     tally =score.scoreBoard()
     time = clock.Clock(0) 
@@ -29,10 +31,16 @@ def playGame():
     for i in range(4):
         aliensArr += [aliens.Aliens(xAlien+ 0.1*(i+1),yAlien - 0.1,vxAlien,vyAlien,bullet,False,0.3-0.1*i,0.1*i,playerone)]
     blown = False
+    bomb = bombs.Bomb(1,random.random(),playerone.x,0.15)
     while True:
         time.updateTime()
         stddraw.clear(stddraw.GREEN)
         tally.updateScore()
+        b = bomb.bombUpdate()
+        if random.randrange(100) == 0 and bomb.y<0:
+           bomb.y =1
+           bomb.x = random.random()
+        bomb.xShooter = playerone.x
         if playerone.shooter():
             break
         for i in aliensArr:
@@ -40,7 +48,7 @@ def playGame():
            if i.blown:
                tally.addScore()
                i.blown = False
-           if i.alien():
+           if i.alien() or b:
                stddraw.show(1000)
                return True
         stddraw.show(10)
