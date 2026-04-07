@@ -10,6 +10,7 @@ import clock
 import bombs
 def playGame():
     tally =score.scoreBoard()
+    timeShot = clock.Clock(0)
     time = clock.Clock(0) 
     x = 0.5
     vx =0
@@ -19,7 +20,7 @@ def playGame():
     a = math.pi/2
     av =0
     bullet =[shooter.Bullet(xs,ys,a,0.05)]
-    playerone = shooter.Shooter(x,vx,shot,a,av,bullet,time)
+    playerone = shooter.Shooter(x,vx,shot,a,av,bullet,timeShot)
     xAlien = 0.1
     yAlien = 0.9
     vAlien = 0.008
@@ -27,13 +28,14 @@ def playGame():
     vyAlien = -vAlien * math.sin(math.pi/36)
     aliensArr = []
     for i in range(4):
-        aliensArr += [aliens.Aliens(xAlien + 0.1*(i+1),yAlien,vxAlien,vyAlien,bullet,False,0.3-0.1*i,0.1*i,playerone)]
+        aliensArr += [aliens.Aliens(xAlien + 0.1*(i+1),yAlien,vxAlien,vyAlien,bullet,False,0.3-0.1*i,0.1*i,playerone,tally,time)]
     for i in range(4):
-        aliensArr += [aliens.Aliens(xAlien+ 0.1*(i+1),yAlien - 0.1,vxAlien,vyAlien,bullet,False,0.3-0.1*i,0.1*i,playerone)]
+        aliensArr += [aliens.Aliens(xAlien+ 0.1*(i+1),yAlien - 0.1,vxAlien,vyAlien,bullet,False,0.3-0.1*i,0.1*i,playerone,tally,time)]
     blown = False
     bomb = bombs.Bomb(1,random.random(),playerone.x,0.15)
     while True:
         time.updateTime()
+        timeShot.updateTime()
         stddraw.clear(stddraw.GREEN)
         tally.updateScore()
         b = bomb.bombUpdate()
@@ -45,9 +47,6 @@ def playGame():
             break
         for i in aliensArr:
            i.bullet = bullet
-           if i.blown:
-               tally.addScore()
-               i.blown = False
            if i.alien() or b:
                stddraw.show(1000)
                return True
