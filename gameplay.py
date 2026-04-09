@@ -1,5 +1,5 @@
+import stddraw #type: ignore
 import shooter
-import stddraw
 import math
 import aliens
 import main
@@ -8,6 +8,7 @@ import score
 import random
 import clock
 import bombs
+
 def playGame():
     tally =score.scoreBoard()
     timeShot = clock.Clock(0)

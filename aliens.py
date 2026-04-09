@@ -1,13 +1,15 @@
+import stddraw #type: ignore
+import stdaudio #type: ignore
+from picture import Picture #type: ignore
 import clock
 import score
-import stddraw
 import math
-from picture import Picture
-import stdaudio
 import threading
 import random
+
 def play_gameover():
-    stdaudio.playFile("gameover")
+    stdaudio.playFile("./Assets/audio/gameover")
+    
 class Aliens:
     def __init__(self,x,y,vx,vy,bullet,blown,width,length,shooter,tally,time):
         self.x= x
@@ -23,7 +25,7 @@ class Aliens:
         self.time = time
 
     def alien(self):
-        alien = Picture("Alien.png")
+        alien = Picture("./Assets/img/Alien.png")
         if not 0+self.length<=self.x<=1-self.width:
             self.vx = -self.vx
         if not self.y<=1:

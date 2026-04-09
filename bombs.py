@@ -1,18 +1,21 @@
+import stddraw #type: ignore
+import stdaudio #type: ignore
+from picture import Picture #type: ignore
 import clock
-import stddraw
 import random
-from picture import Picture
-import stdaudio
 import threading
+
 def play_gameover():
-    stdaudio.playFile("gameover")
+    stdaudio.playFile("./Assets/audio/gameover")
+
 class Bomb():
     def __init__(self,y,x,xShooter,yShooter):
         self.y = y
         self.x = x
         self.xShooter = xShooter
         self.yShooter = yShooter
-        self.bomb = Picture("bomb2.png")
+        self.bomb = Picture("./Assets/img/bomb2.png")
+
     def bombUpdate(self):
         vy = -0.005
         self.y = self.y  + vy
@@ -23,6 +26,7 @@ class Bomb():
            stddraw.text(0.5,0.5,"Game Over")
            threading.Thread(target=play_gameover,daemon =True).start()
            return True
+        
 def main():
    bomb = Bomb(1,random.random(),0,0)
    while True:
