@@ -11,7 +11,7 @@ def play_gameover():
     stdaudio.playFile("./Assets/audio/gameover")
     
 class Aliens:
-    def __init__(self,x,y,vx,vy,bullet,blown,width,length,shooter,tally,time):
+    def __init__(self,x,y,vx,vy,bullet,blown,width,length,shooter,tally,time,gameover):
         self.x= x
         self.y = y
         self.vx = vx
@@ -23,15 +23,17 @@ class Aliens:
         self.shooter = shooter
         self.tally = tally
         self.time = time
+        self.gameover = gameover
 
     def alien(self):
         alien = Picture("./Assets/img/Alien.png")
         if not 0+self.length<=self.x<=1-self.width:
             self.vx = -self.vx
+            self.y =self.y - 0.05
         if not self.y<=1:
-            self.vy = -self.vy
+            pass#self.vy = -self.vy
         self.x = self.x + self.vx
-        self.y = self.y + self.vy
+        #self.y = self.y + self.vy
         for i in self.bullet:
             if (abs(self.x-i.x)<0.05 and abs(self.y - i.y)<0.05):
                 i.x = -1
@@ -44,18 +46,15 @@ class Aliens:
                 self.vy = 0
                 self.blown = True
                 self.tally.addScore()
-        if random.randrange(int(1000- (-math.pow(2,-(self.time.time/5000)+9.95)+990))) ==0 and self.blown:
-            self.x=0.1
-            self.y =0.9
-            self.blown = False
-            self.vx = -math.pow(0.002,(self.time.time/50000)+0.57)+0.03
-            self.vy = -0.0009
         if (self.y < 0 or (abs(self.shooter.x-self.x)<0.05 and abs(0.15 - self.y)<0.05) ) and not self.blown:
-            stddraw.setFontSize(30)
-            stddraw.setPenColor(stddraw.RED)
-            stddraw.text(0.5,0.5,"Game Over")
-            threading.Thread(target=play_gameover,daemon=True).start()
-            return True
+            self.x = 1
+            self.y= 1
+            self.width = 0
+            self.length = 0
+            self.vx = 0
+            self.vy = 0
+            self.blown = True
+            return self.gameover.updateGameOver()
         if not self.blown:
             stddraw.picture(alien,self.x,self.y)
 def main():
