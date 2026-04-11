@@ -1,33 +1,26 @@
-import stddraw #type: ignore
-import stdaudio #type: ignore
-from picture import Picture #type: ignore
+import stddraw
+import stdaudio
+from picture import Picture
 import math
 import threading
-
 class Bullet:
-
     def __init__(self,x,y,a,v):
         self.x=x
         self.y =y
         self.a =a
         self.v =v
-
     def shoot(self):
         vx = math.cos(self.a) * self.v
         vy = math.sin(self.a) *self.v
         self.x = self.x  +vx
         self.y = self.y  +vy
         stddraw.point(self.x,self.y)
-
 def curser(x,y,a):
     y = y + 0.015
     stddraw.line(x,y,x + math.cos(a)/10,y+math.sin(a)/10)
-
 def play_sound():
-    stdaudio.playFile("./Assets/audio/Lazer")
-
+    stdaudio.playFile("Lazer")
 class Shooter:
-    
     def __init__(self,x,vx,shot,a,av,bullet,time):
         self.x = x
         self.vx = vx
@@ -38,7 +31,7 @@ class Shooter:
         self.time = time
 
     def shooter(self):
-        ship = Picture("./Assets/img/ship2.png")
+        ship = Picture("ship2.png")
         vxp = 0.005
         vxn = -0.005
         avp = 0.01
@@ -94,7 +87,6 @@ class Shooter:
             self.vx = -self.vx
         self.x = self.x + self.vx
         stddraw.picture(ship,self.x,0.15)
-
 def main():
     x = 0.5
     vx =0
