@@ -31,9 +31,9 @@ class Aliens:
             self.vx = -self.vx
             self.y =self.y - 0.05
         if not self.y<=1:
-            pass#self.vy = -self.vy
+            pass
         self.x = self.x + self.vx
-        #self.y = self.y + self.vy
+        
         for i in self.bullet:
             if (abs(self.x-i.x)<0.05 and abs(self.y - i.y)<0.05):
                 i.x = -1
