@@ -29,9 +29,3 @@ def displayTitleScreen():
     stddraw.text(0.5,0.2,"[X] to quit")
     stddraw.text(0.5,0.1,"PRESS ANY KEY TO START")
 
-
-def main():
-    gameplay.playGame()
-
-if __name__ == "__main__":main()
-
