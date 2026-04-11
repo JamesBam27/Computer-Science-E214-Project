@@ -3,7 +3,6 @@ import shooter
 import math
 import aliens
 import main
-import titleScreen
 import score
 import random
 import clock
