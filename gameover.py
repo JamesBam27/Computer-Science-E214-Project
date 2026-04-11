@@ -1,6 +1,6 @@
-import stddraw
+import stddraw #type: ignore
+import stdaudio #type: ignore
 import threading
-import stdaudio
 def play_gameover():
     stdaudio.playFile("gameover")
 class GameOver:

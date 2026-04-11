@@ -1,6 +1,6 @@
 import stddraw #type: ignore
 import stdaudio #type: ignore
-import titlescreen
+import titleScreen
 import gameplay
 import threading
 
@@ -14,7 +14,7 @@ class Music():
             stdaudio.playFile("./Assets/audio/music")
 
 def main():
-    titlescreen.displayTitleScreen()
+    titleScreen.displayTitleScreen()
     tunes = Music()
     threading.Thread(target=tunes.play_music,daemon=True).start()
     while True:
