@@ -7,8 +7,13 @@ import score
 import random
 import clock
 import bombs
-
 import gameover
+
+# TODO Make this readable and convert to GameManager
+# The strat might be to create a new GameManager class,
+# and then just use this file as a framework to build
+# the GameManager off of. Feel it out. 
+
 class GamePlay:
     def __init__(self,vAlien):
         self.vAlien = vAlien

@@ -6,6 +6,9 @@ import gameplay
 import threading
 import highscore
 
+# TODO Create to MusicManager
+# TODO Group initialisation etc. Make it easier to read. 
+
 class Music():
 
     def __init__(self):
@@ -16,9 +19,6 @@ class Music():
             stdaudio.playFile("./Assets/audio/music")
 
 def main():
-
-    # Inititalise Score Manager
-    scoreManager = highscore.highScore()
 
     titlescreen.displayTitleScreen()
     tunes = Music()
