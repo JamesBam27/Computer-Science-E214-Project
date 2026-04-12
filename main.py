@@ -1,8 +1,10 @@
 import stddraw #type: ignore
 import stdaudio #type: ignore
+import stdio #type: ignore
 import titlescreen
 import gameplay
 import threading
+import highscore
 
 class Music():
 
@@ -14,6 +16,10 @@ class Music():
             stdaudio.playFile("./Assets/audio/music")
 
 def main():
+
+    # Inititalise Score Manager
+    scoreManager = highscore.highScore()
+
     titlescreen.displayTitleScreen()
     tunes = Music()
     threading.Thread(target=tunes.play_music,daemon=True).start()

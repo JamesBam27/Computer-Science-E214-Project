@@ -12,6 +12,7 @@ import gameover
 class GamePlay:
     def __init__(self,vAlien):
         self.vAlien = vAlien
+
     def playGame(self):
         gameOver = gameover.GameOver()
         tally =score.scoreBoard()
@@ -59,6 +60,7 @@ class GamePlay:
             for i in aliensArr:
                i.bullet = bullet
                if i.alien() or b:
+                   
                    stddraw.show(1000)
                    return "gameover"
             stddraw.show(10)
