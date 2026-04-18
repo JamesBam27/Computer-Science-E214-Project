@@ -20,7 +20,7 @@ class GamePlay:
 
     def playGame(self):
         gameOver = gameover.GameOver()
-        tally =score.scoreBoard()
+        tally = score.scoreBoard(0)
         timeShot = clock.Clock(0)
         time = clock.Clock(0) 
         x = 0.5
@@ -42,7 +42,7 @@ class GamePlay:
             aliensArr += [aliens.Aliens(xAlien + 0.1*(i+1),yAlien,vxAlien,vyAlien,bullet,False,0.3-0.1*i,0.1*i,playerone,tally,time,gameOver)]
         for i in range(4):
             aliensArr += [aliens.Aliens(xAlien+ 0.1*(i+1),yAlien - 0.1,vxAlien,vyAlien,bullet,False,0.3-0.1*i,0.1*i,playerone,tally,time,gameOver)]
-        blown = False
+
         bomb = bombs.Bomb(1,random.random(),playerone.x,0.15,gameOver)
         while True:
             time.updateTime()

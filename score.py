@@ -3,8 +3,8 @@ import highscore
 
 class scoreBoard:
 
-   def __init__(self):
-       self.score = 0
+   def __init__(self, init_score):
+       self.score = init_score
        self.highscoreManager = highscore.highScore()
 
    def updateScore(self):

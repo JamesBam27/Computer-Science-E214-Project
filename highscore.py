@@ -7,7 +7,6 @@ datafile_name = "data.txt"
 class highScore:
 
     def update(self, newscore):
-        # This function will
         # - Check if the newscore is greater than the current highscore
         # - If it is: return true, save new highscore
         # - If not: return false, do nothing
@@ -67,9 +66,9 @@ class highScore:
                 file.close()
 
 # TODO
-# Currently updating the higscore in score.py.
+# Currently updating the highscore in score.py.
 # Need a better way of managing the score vs highscore.
 # Possibly have scoreManager and highscoreManager as seperate objects.
 # A bit unncessary but should work well here.
-# Look at have a drawManager for drawing stuff like the currentScore
+# Look at having a drawManager for drawing stuff like the currentScore
 # when you work on this next.

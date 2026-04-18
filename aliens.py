@@ -27,7 +27,7 @@ class Aliens:
 
     def alien(self):
         alien = Picture("./Assets/img/Alien.png")
-        if not 0+self.length<=self.x<=1-self.width:
+        if not 0 + self.length <= self.x <= 1-self.width:
             self.vx = -self.vx
             self.y =self.y - 0.05
         if not self.y<=1:

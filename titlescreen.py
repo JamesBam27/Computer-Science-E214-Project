@@ -1,6 +1,4 @@
-import stdio #type: ignore
 import stddraw #type: ignore
-import gameplay
 
 def setScale(x=1,y=1):
     stddraw.setXscale(0,x)
