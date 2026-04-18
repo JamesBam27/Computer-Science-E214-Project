@@ -7,22 +7,21 @@ def setScale(x=1,y=1):
 def displayTitleScreen():
 
     # Init and Draw Title
-    stddraw.clear(stddraw.MAGENTA)	
+    stddraw.clear(stddraw.BLACK)	
     setScale(1,1)
-    stddraw.setFontSize(30)
+    stddraw.setFontSize(50)
     stddraw.setPenColor(stddraw.GREEN)
-    stddraw.text(0.5,0.9,"COSMIC CONQUISTADORS")
+    stddraw.text(0.5,0.9,"ALIEN INVADERS")
 
     # Draw Heading
-    stddraw.setFontSize(16)
-    stddraw.setPenColor(stddraw.BLACK)
+    stddraw.setFontSize(35)
+ 
     stddraw.text(0.5,0.7,"Instructions")
 
     # Draw Instructions
-    stddraw.setFontSize(12)
+    stddraw.setFontSize(18)
     stddraw.text(0.5,0.6,"[A] move left,[S] stop, [D] move right")
     stddraw.text(0.5,0.5,"[Q] Rotate left, [W] stop rotate, [E] rotate right")
     stddraw.text(0.5,0.4,"[Space] to shoot")
-    stddraw.text(0.5,0.3,"[H] for help")
     stddraw.text(0.5,0.2,"[X] to quit")
     stddraw.text(0.5,0.1,"PRESS ANY KEY TO START")
