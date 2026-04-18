@@ -2,7 +2,7 @@ import stddraw #type: ignore
 import stdaudio #type: ignore
 import threading
 def play_gameover():
-    stdaudio.playFile("gameover")
+   stdaudio.playFile("./Assets/audio/gameover")
 class GameOver:
     def __init__(self):
         self.lives = 3

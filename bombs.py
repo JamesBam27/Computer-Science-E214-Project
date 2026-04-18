@@ -5,23 +5,20 @@ import clock
 import random
 import threading
 
-def play_gameover():
-    stdaudio.playFile("./Assets/audio/gameover")
+class Bomb(): #class that represents a bomb which is to fall from the aliens
+    def __init__(self,y,x,xShooter,yShooter,gameOver): 
+        self.y = y #set the y coordinate
+        self.x = x#set the x coordinate
+        self.xShooter = xShooter#set the xposition of the shooter
+        self.yShooter = yShooter#set the y position of the shooter
+        self.bomb = Picture("./Assets/img/bomb2.png")#set the picture of the bomb
+        self.gameOver = gameOver#set the gameover object
 
-class Bomb():
-    def __init__(self,y,x,xShooter,yShooter,gameOver):
-        self.y = y
-        self.x = x
-        self.xShooter = xShooter
-        self.yShooter = yShooter
-        self.bomb = Picture("./Assets/img/bomb2.png")
-        self.gameOver = gameOver
-
-    def bombUpdate(self):
-        vy = -0.005
-        self.y = self.y  + vy
-        stddraw.picture(self.bomb,self.x,self.y)
-        if abs(self.xShooter - self.x)<0.05 and abs(self.yShooter - self.y)<0.05:
+    def bombUpdate(self):#move the bomb and check if it has hit a player
+        vy = -0.01#set the velocity
+        self.y = self.y  + vy#move it down
+        stddraw.picture(self.bomb,self.x,self.y)#draw the bomb
+        if abs(self.xShooter - self.x)<0.025 and abs(self.yShooter - self.y)<0.025:#check if it got too close the the shooter and if it did take a life
            self.y = -1 
            return self.gameOver.updateGameOver()
         

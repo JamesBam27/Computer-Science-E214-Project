@@ -4,96 +4,88 @@ from picture import Picture #type: ignore
 import math
 import threading
 
-class Bullet:
+class Bullet:#class to represent a bullet shot by the player
 
     def __init__(self,x,y,a,v):
-        self.x=x
-        self.y =y
-        self.a =a
-        self.v =v
+        self.x=x#set the x position
+        self.y =y#set the y position
+        self.a =a#set the angle
+        self.v =v#set the velocity
 
-    def shoot(self):
+    def shoot(self): #update the position of the bullet and display it on the screen
         vx = math.cos(self.a) * self.v
         vy = math.sin(self.a) *self.v
         self.x = self.x  +vx
         self.y = self.y  +vy
         stddraw.point(self.x,self.y)
 
-def curser(x,y,a):
+def curser(x,y,a):#function to update and draw the turret 
     y = y + 0.015
-    stddraw.line(x,y,x + math.cos(a)/10,y+math.sin(a)/10)
+    stddraw.line(x,y,x + math.cos(a)/25,y+math.sin(a)/25)
 
-def play_sound():
+def play_sound(): #function that plays the bullet sound
     stdaudio.playFile("./Assets/audio/Lazer")
 
-class Shooter:
+class Shooter: #class that defines the player
     
-    def __init__(self,x,vx,shot,a,av,bullet,time):
-        self.x = x
-        self.vx = vx
-        self.av =av
-        self.a =a
-        self.shot = shot
-        self.bullet = bullet
-        self.time = time
+    def __init__(self,x,vx,a,av,bullet,time):
+        self.x = x #set the x position
+        self.vx = vx#set the x velocity
+        self.av =av#set the angular velocity
+        self.a =a#set the angle
+        self.bullet = bullet #set the array of bullets
+        self.time = time #set the Clock object of the time
+        self.ship = Picture("./Assets/img/ship2.png")#create the picture object of the shooter
+        self.vxp = 0.005 #set the positive x velocity
+        self.vxn = -0.005#set the negative x velocity
+        self.avp = 0.01#set the positive angular velocity of the turret
+        self.avn =-0.01#set the negative angular velocity of the turret
 
-    def shooter(self):
-        ship = Picture("./Assets/img/ship2.png")
-        vxp = 0.005
-        vxn = -0.005
-        avp = 0.01
-        avn =-0.01
-        if stddraw.hasNextKeyTyped():
-            key = stddraw.nextKeyTyped()
+
+    def shooter(self):#method that update the infomation on the shooter and perform all logic of the shooter
+        if stddraw.hasNextKeyTyped(): #check if a key has been typed
+            key = stddraw.nextKeyTyped() #store the key that was most reacently typed
             if key == "d":
-                self.vx = vxp
+                self.vx = self.vxp #move right
             else:
                 if key == "a":
-                    self.vx  =vxn
+                    self.vx  =self.vxn#move left
                 else:
                     if key == "s":
-                        self.vx = 0
+                        self.vx = 0#stop
                     else:
                         if key =="x":
-                            return True
+                            return True #close the program
                         else:
-                            if key == " " and (self.time.time>40):
-                                threading.Thread(target=play_sound).start()
-                                self.time.time = 0 
-                                if not self.shot:
-                                    self.shot = True
-                                    self.bullet[0].x = self.x
-                                    self.bullet[0].y = 0.15
-                                    self.bullet[0].a = self.a
-                                else:
-                                   self.bullet += [Bullet(self.x,0.15,self.a,0.05)]
-
+                            if key == " " and (self.time.time>5): #shoot the bullet only after a certain amount of time from the last one
+                                threading.Thread(target=play_sound).start()#play the bullet sound
+                                self.time.time = 0 #reset the shot timer
+                                self.bullet += [Bullet(self.x,0.15,self.a,0.05)]#add a bullet to the bullet array
                             else:
                                 if key == "e":
-                                    self.av = avn
+                                    self.av = self.avn#move the turret anticlockwise
                                 else:
                                     if key == "q":
-                                        self.av  =avp
+                                        self.av  =self.avp#move the turet clockwise
                                     else:
                                         if key == "w":
-                                            self.av = 0
+                                            self.av = 0 #stop the turret
                                         
 
-        self.a = self.a  +self.av
-        if not  0<self.a<math.pi:
+        self.a = self.a  +self.av #move the turret
+        if not  0<self.a<math.pi:#if the turret has an angle less than zero and greater than 90 degrees turn the turret around
             self.av =-self.av
-        curser(self.x,0.15,self.a)
-        for i in self.bullet:   
-            if not (0<i.x<1 and 0<i.y<1):
-               i.y = -1
-               i.x = -1
+        curser(self.x,0.15,self.a)#update and draw the curser
+        for i in self.bullet:#check all the bullets
+            if not (0<i.x<1 and 0<i.y<1):#if they are off the screen remove them 
+               self.bullet.remove(i)
             else:
-                i.shoot()
-		
-        if self.x <0 or self.x>1:
+                i.shoot() #update the position and draw all the bullets
+
+        if self.x <0 or self.x>1:#if the shooter reaches the end of the screen turn around
             self.vx = -self.vx
-        self.x = self.x + self.vx
-        stddraw.picture(ship,self.x,0.15)
+        self.x = self.x + self.vx#move the shooter
+        stddraw.picture(self.ship,self.x,0.15)#draw the shooter
 
 def main():
     x = 0.5
