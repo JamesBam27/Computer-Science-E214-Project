@@ -1,4 +1,5 @@
 import stddraw  # type: ignore
+import stdaudio #type: ignore
 import shooter
 import math
 import aliens
@@ -9,24 +10,27 @@ import gameover
 import constants
 import bunkers
 import leaderboard
+import threading
 
 # TODO Make this readable and convert to GameManager
 # The strat might be to create a new GameManager class,
 # and then just use this file as a framework to build
 # the GameManager off of. Feel it out.
 
+def play_gameover():
+    stdaudio.playFile("./Assets/audio/gameover")
 
 class GameManager:   # class that defines the current instance of the game
-    def __init__(self, v_alien, tally, player):
-        self.v_alien = v_alien  # speed of the alien
+    def __init__(self, v, tally, player):
+        self.alien_velocity = v  # speed of the alien
         self.tally = tally  # score
         self.selected_player = player
+        self.player_lives = 3
 
     def play_game(self):
 
         # -- INITIALISE
 
-        game_over = gameover.GameOver()
         time_shot = clock.Clock(
             0
         )  # create a clock object to track the time between bullets shot
@@ -46,7 +50,7 @@ class GameManager:   # class that defines the current instance of the game
         x_alien = 0.1  # starting alien position
         y_alien = 0.9  # starting alien position
         vx_alien = (
-            self.v_alien
+            self.alien_velocity
         )  # set the initial alien velocity to that of the game instance
         aliens_arr = []  # inintialise an empty array to store the aliens
 
@@ -91,23 +95,30 @@ class GameManager:   # class that defines the current instance of the game
         )  # initialise the bunkers
         boss_spawned = False
         bunker2 = bunkers.Bunker(0.8, 0.4, 3, bullet, bomb, aliens_arr)
-        while True:  # keep the game running
+
+        # We don't want the displayed highscore to change while we play the game,
+        # so we get it before the game starts, so the display stays constant while
+        # the player playd the game.
+        player_highscore = leaderBoardManager.get_score(self.selected_player)
+
+        # Main Game Loop
+        while True:
             time.updateTime()  # add to the time for the game time
             time_shot.updateTime()  # add to the time for the time between shots
             stddraw.clear(stddraw.BLACK)  # set the canvas to green
             bunker1.update_bunker()  # check the state of the bunkers
             bunker2.update_bunker()
 
-            self.tally.update_score(self.selected_player)  # update the score board
-            bomb_hit = bomb.bomb_update()  # update the bombs
-            stddraw.text(
-                0.1, 0.9, "Lives: " + str(game_over.lives)
-            )  # draw the lives in the top right hand corner
-            
             # Display Selected Player and Highscore
             stddraw.setPenColor(stddraw.WHITE)  
             stddraw.setFontSize(18) 
-            stddraw.text(0.2, 0.95, f"Player {self.selected_player} Selected. Highscore: {leaderBoardManager.get_score(self.selected_player)}")
+            stddraw.text(0.2, 0.95, f"Player {self.selected_player} Selected. Highscore: {player_highscore}")
+
+            self.tally.update_score(self.selected_player)  # update the score board
+            bomb_hit = bomb.bomb_update()  # update the bombs
+            stddraw.text(
+                0.1, 0.9, "Lives: " + str(self.player_lives)
+            )  # draw the lives in the top right hand corner
 
             if (
                 random.randrange(50) == 0 and time.time > 500 and not boss_spawned
@@ -151,14 +162,14 @@ class GameManager:   # class that defines the current instance of the game
             if all_aliens_destroyed:  # if all aliens are dead end the level by returning "endLevel"
                 return "level_end" 
             if bomb_hit:
-                if game_over.update_game_over():
-                    game_over.end_game()
+                if self.update_game_over():
+                    self.end_game()
                     stddraw.show(1000)
                     return "game_over"
             if boss_spawned:  # check if the boss is alive and update his positon and check if he has hit anything
                 if boss.update_alien():
-                    if game_over.update_game_over():
-                        game_over.end_game()
+                    if self.update_game_over():
+                        self.end_game()
                         stddraw.show(1000)
                         return "game_over"
                     boss_spawned = False
@@ -166,10 +177,26 @@ class GameManager:   # class that defines the current instance of the game
             for i in aliens_arr:  # check all of the aliens to see if they have killed the player
                 if i.update_alien():  # has an alien killed the player
                     if (
-                        game_over.update_game_over()
+                        self.update_game_over()
                     ):  # check if the player has enough lives
-                        game_over.end_game()  # Display the gameover message
+                        self.end_game()  # Display the gameover message
                         stddraw.show(1000)
                         return "game_over"
 
             stddraw.show(10)
+
+    def end_end_game(self):
+        pass
+
+    def update_game_over(self):
+        if self.player_lives > 0:
+            self.player_lives -= 1
+            return False
+        else:
+            return True
+
+    def end_game(self):
+        stddraw.setFontSize(30)
+        stddraw.setPenColor(stddraw.RED)
+        stddraw.text(0.5,0.5,"Game Over")
+        threading.Thread(target=play_gameover,daemon=True).start()

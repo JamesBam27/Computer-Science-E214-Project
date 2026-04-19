@@ -1,11 +1,5 @@
 import stddraw #type: ignore
-import stdaudio #type: ignore
 from picture import Picture #type: ignore
-import clock
-import score
-import math
-import threading
-import random
 import constants
     
 class Aliens:
