@@ -4,7 +4,7 @@ import highscore
 class ScoreBoard:#class to keep the players score
 
    def __init__(self):
-       self.score = 0 #start with a socre of 0
+       self.score = 0 #start with a score of 0
        self.highscoreManager = highscore.highScore() #create a highscore manager object
 
    def update_score(self): #display the score in the top right hand coner
