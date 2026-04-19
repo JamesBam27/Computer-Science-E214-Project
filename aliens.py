@@ -9,30 +9,26 @@ import random
 import constants
     
 class Aliens:
-    def __init__(self,x,y,v_x,bullet,blown,width,length,shooter,tally,time,game_over):
+    def __init__(self,x,y,v_x,bullet,blown,right_bound,left_bound,shooter,tally):
         self.x= x#set the x position
         self.y = y#set the y position
         self.v_x = v_x#set the x velocity
         self.bullet = bullet#set the array of bullets
         self.blown = blown#set if the aliens is dead or alive
-        self.width = width#set the right boundary for the alien
-        self.length = length#set the left boundary for the alien
+        self.right_bound = right_bound#set the right boundary for the alien
+        self.left_bound = left_bound#set the left boundary for the alien
         self.shooter = shooter#set the shooter object
         self.tally = tally#set the score
-        self.time = time#set the time
-        self.game_over = game_over #set the gameover object
         self.alien = Picture("./Assets/img/Alien.png")
     def kill_alien(self,game_over= False): 
         self.x = 1
         self.y= 1
-        self.width = 0
-        self.length = 0
         self.v_x = 0 #stop the alien
         self.blown = True
 
 
     def update_alien(self):
-        if not self.length<=self.x<=constants.RIGHT_BOUND-self.width: #if the alien reaches its boundary turn it around and move it down
+        if not self.left_bound<=self.x<=constants.RIGHT_BOUND-self.right_bound: #if the alien reaches its boundary turn it around and move it down
             self.v_x = -self.v_x
             self.y =self.y - 0.05
         self.x = self.x + self.v_x #move the alien in the x direction
@@ -50,8 +46,8 @@ class Aliens:
             stddraw.picture(self.alien,self.x,self.y)
         return False
 class Boss(Aliens): #boss class that inherits from the alien class: same as alien except the boss has lives and has to be hit a certain amout of times to die
-    def __init__(self,x,y,v_x,bullet,blown,width,length,shooter,tally,time,game_over,health):
-        super().__init__(x,y,v_x,bullet,blown,width,length,shooter,tally,time,game_over) #call the parents constructor
+    def __init__(self,x,y,v_x,bullet,blown,right_bound,left_bound,shooter,tally,health):
+        super().__init__(x,y,v_x,bullet,blown,right_bound,left_bound,shooter,tally) #call the parents constructor
         self.health = health
         self.change_alien()
     def change_alien(self):#have a diffrent picture
