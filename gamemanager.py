@@ -6,20 +6,21 @@ import random
 import clock
 import bombs
 import gameover
+import constants
+import bunkers
+import leaderboard
 
 # TODO Make this readable and convert to GameManager
 # The strat might be to create a new GameManager class,
 # and then just use this file as a framework to build
 # the GameManager off of. Feel it out.
 
-import constants
-import bunkers
-
 
 class GameManager:   # class that defines the current instance of the game
-    def __init__(self, v_alien, tally):
+    def __init__(self, v_alien, tally, player):
         self.v_alien = v_alien  # speed of the alien
         self.tally = tally  # score
+        self.selected_player = player
 
     def play_game(self):
 
@@ -30,6 +31,8 @@ class GameManager:   # class that defines the current instance of the game
             0
         )  # create a clock object to track the time between bullets shot
         time = clock.Clock(0)  # create a clock object to track the game time
+
+        leaderBoardManager = leaderboard.LeaderBoardManager()
 
         x = 0.5  # starting x position for shooter
         vx = 0  # starting velocity of shooter in the x direction
@@ -95,11 +98,17 @@ class GameManager:   # class that defines the current instance of the game
             bunker1.update_bunker()  # check the state of the bunkers
             bunker2.update_bunker()
 
-            self.tally.update_score()  # update the score board
+            self.tally.update_score(self.selected_player)  # update the score board
             bomb_hit = bomb.bomb_update()  # update the bombs
             stddraw.text(
                 0.1, 0.9, "Lives: " + str(game_over.lives)
             )  # draw the lives in the top right hand corner
+            
+            # Display Selected Player and Highscore
+            stddraw.setPenColor(stddraw.WHITE)  
+            stddraw.setFontSize(18) 
+            stddraw.text(0.2, 0.95, f"Player {self.selected_player} Selected. Highscore: {leaderBoardManager.get_score(self.selected_player)}")
+
             if (
                 random.randrange(50) == 0 and time.time > 500 and not boss_spawned
             ):  # randomly spawn the boss afer a certain amount of game time played

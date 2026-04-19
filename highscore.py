@@ -1,7 +1,8 @@
-# Blame: Robert van Woudenberg
 import stdio #type: ignore
 import os
 import json
+
+# OBSOLETE -> function handled by leaderboard.py
 
 datafile_name = "data.txt"
 
