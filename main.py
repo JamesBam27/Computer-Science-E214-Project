@@ -27,7 +27,7 @@ def main():
     score_manager = highscore.highScore()  # Inititalise Score Manager
     tally = score.ScoreBoard()  # create a ScoreBoard object
     titlescreen.displayTitleScreen()  # set the title screen on the canvas
-    stddraw.setPenColor(stddraw.BLACK)  # change pen color to black
+    stddraw.setPenColor(stddraw.WHITE)  # change pen color to black
     tunes = Music()  # create a music object
     threading.Thread(
         target=tunes.play_music, daemon=True
@@ -48,7 +48,7 @@ def main():
     level = 0  # set level to 0
     while True:  # game loop
         if game_status == "endLevel":  # if the .playGame() method returned "endlevel"
-            vAlien = vAlien + 0.0025  # increase the speed of the alien
+            vAlien = vAlien + 0.0008  # increase the speed of the alien
             game.vAlien = vAlien  # update the value for the object
             level += 1  # increase the level
             stddraw.setFontSize(50)  # change the font size to 50
@@ -62,7 +62,7 @@ def main():
                 game_status == "gameover"
             ):  # if the .gamePlay() method returned "gameover"
                 game.vAlien = 0.0005  # reset the alien speed
-                stddraw.setPenColor(stddraw.BLACK)  # reset the pen color
+                stddraw.setPenColor(stddraw.WHITE)  # reset the pen color
                 stddraw.setFontSize(18)  # reset the font size
                 level = 0  # reset the level
                 tally.score = 0  # reset the score

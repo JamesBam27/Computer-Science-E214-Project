@@ -22,7 +22,7 @@ class Aliens:
         self.time = time#set the time
         self.game_over = game_over #set the gameover object
         self.alien = Picture("./Assets/img/Alien.png")
-    def kill_alien(self): 
+    def kill_alien(self,game_over= False): 
         self.x = 1
         self.y= 1
         self.width = 0
@@ -44,25 +44,22 @@ class Aliens:
                 self.kill_alien()
                 self.tally.add_score()
         if (self.y < constants.BOTTOM_BOUND or (abs(self.shooter.x-self.x)<constants.ALIEN_HITBOX and abs(constants.SHOOTER_Y - self.y)<constants.ALIEN_HITBOX) ) and not self.blown: # if an alive alien hits the floor or the player remove a life or end the game
-            self.kill_alien()
+            self.kill_alien(True)
             return True
         if not self.blown:# draw the alien only if it is alive
             stddraw.picture(self.alien,self.x,self.y)
         return False
-def main():
-    xAlien = 0
-    yAlien = 1
-    vAlien = 0.001
-    v_xAlien = vAlien *math.cos(math.pi/36)
-    vyAlien = vAlien * math.sin(math.pi/36)
-    alien2 = Aliens(xAlien+0.1,yAlien,vxAlien,vyAlien,0,0,False,0.1,0)
-    alien1 = Aliens(xAlien+0.2,yAlien,vxAlien,vyAlien,0,0,False,0,0.1)
-    while True:
-        stddraw.clear()
-        alien1.alien()
-        alien2.alien()
-        stddraw.show(10)
-if __name__ =="__main__":main()
+class Boss(Aliens): #boss class that inherits from the alien class: same as alien except the boss has lives and has to be hit a certain amout of times to die
+    def __init__(self,x,y,v_x,bullet,blown,width,length,shooter,tally,time,game_over,health):
+        super().__init__(x,y,v_x,bullet,blown,width,length,shooter,tally,time,game_over) #call the parents constructor
+        self.health = health
+        self.change_alien()
+    def change_alien(self):#have a diffrent picture
+        self.alien = Picture("./Assets/img/Alien2.png")
+    def kill_alien(self,game_over=False):
+        if self.health>0 and not game_over:
+            self.health -= 1
+        else:
+            super().kill_alien()
 
-#Test Comment
 
