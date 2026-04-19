@@ -1,11 +1,14 @@
 import stddraw #type: ignore
 import leaderboard
 
-class ScoreBoard:#class to keep the players score
+# Manages the players score and hands it off to the
+# LeaderBoard Manager
+
+class ScoreBoard:
 
    def __init__(self):
-       self.score = 0 #start with a score of 0
-       self.leaderBoardManager = leaderboard.LeaderBoardManager()
+      self.score = 0
+      self.leaderBoardManager = leaderboard.LeaderBoardManager()
 
    # Give The Current Score to the Leaderboard Manager and Display It
    # On Screen
@@ -13,5 +16,6 @@ class ScoreBoard:#class to keep the players score
       stddraw.text(0.8,0.9,"Score: " + str(self.score)) 
       self.leaderBoardManager.update(self.score, player)
       
-   def increment(self): #add one to the score
-      self.score  +=1
+   
+   def increment(self):
+      self.score  += 1

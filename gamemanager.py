@@ -19,28 +19,30 @@ class GameManager:   # class that defines the current instance of the game
 
     def play_game(self):
 
-        # -- INITIALISE
+        # -- INITIALISATION
 
-        time_shot = clock.Clock(
-            0
-        )  # create a clock object to track the time between bullets shot
+        time_shot = clock.Clock(0)  # create a clock object to track the time between bullets shot
         time = clock.Clock(0)  # create a clock object to track the game time
 
         leaderBoardManager = leaderboard.LeaderBoardManager()
 
+        # Player Initial Parameters
         x = 0.5  # starting x position for shooter
         vx = 0  # starting velocity of shooter in the x direction
         angle = math.pi / 2  # starting angle of turret
         av = 0  # starting angular velocity of turret
         bullet = []  # create an array of bullet objects as an empty array
-        player_one = shooter.Shooter(x, vx, angle, av, bullet, time_shot)  # create a Shooter object with the initial values specified above
+        player = shooter.Shooter(x, vx, angle, av, bullet, time_shot)  # create a Shooter object with the initial values specified above
         
+        # Alien Initial Parameters
         x_alien = 0.1  # starting alien position
         y_alien = 0.9  # starting alien position
         vx_alien = self.alien_velocity  # set the initial alien velocity to that of the game instance
         aliens_arr = []  # inintialise an empty array to store the aliens
 
-        for i in range(12):  # initialise 24 aliens in two rows
+        # Spawn All 24 Aliens, in 2 rows of 12
+
+        for i in range(12):
             aliens_arr += [
                 aliens.Aliens(
                     x_alien + constants.ALIEN_HITBOX * (i + 1),
@@ -50,7 +52,7 @@ class GameManager:   # class that defines the current instance of the game
                     False,
                     0.55 - constants.ALIEN_HITBOX * i,
                     constants.ALIEN_HITBOX * i,
-                    player_one,
+                    player,
                     self.tally
                 )
             ]
@@ -65,35 +67,37 @@ class GameManager:   # class that defines the current instance of the game
                     False,
                     0.55 - constants.ALIEN_HITBOX * i,
                     constants.ALIEN_HITBOX * i,
-                    player_one,
+                    player,
                     self.tally
                 )
             ]
 
-        random_alien = aliens_arr[
-            random.randrange(0, 24)
-        ]  # choose a random alien to shoot the bomb
-        bomb = bombs.Bomb(
-            random_alien.x, random_alien.y, player_one.x, constants.SHOOTER_Y
-        
-        )
-        bunker1 = bunkers.Bunker(
-            0.2, 0.4, 3, bullet, bomb, aliens_arr
-        )  # initialise the bunkers
-        boss_spawned = False
+        # Pick a random alien and drop an initial bomb.
+        # Game loop will throw and error if bomb is not
+        # initially defined.
+        random_alien = aliens_arr[random.randrange(0, 24)] 
+        bomb = bombs.Bomb(random_alien.x, random_alien.y, player.x, constants.SHOOTER_Y)
+
+        # Spawn Bunkers
+        bunker1 = bunkers.Bunker(0.2, 0.4, 3, bullet, bomb, aliens_arr)
         bunker2 = bunkers.Bunker(0.8, 0.4, 3, bullet, bomb, aliens_arr)
+        
+        boss_spawned = False
 
         # We don't want the displayed highscore to change while we play the game,
         # so we get it before the game starts, so the display stays constant while
-        # the player playd the game.
+        # the player played the game.
         player_highscore = leaderBoardManager.get_score(self.selected_player)
 
-        # Main Game Loop
+        # -- MAIN GAME LOOP
+
         while True:
+
+            # Update Time and Bunker States
             time.updateTime()  # add to the time for the game time
             time_shot.updateTime()  # add to the time for the time between shots
-            stddraw.clear(stddraw.BLACK)  # set the canvas to green
-            bunker1.update_bunker()  # check the state of the bunkers
+            stddraw.clear(stddraw.BLACK)
+            bunker1.update_bunker()
             bunker2.update_bunker()
 
             # Display Selected Player and Highscore
@@ -107,9 +111,10 @@ class GameManager:   # class that defines the current instance of the game
                 0.1, 0.9, "Lives: " + str(self.player_lives)
             )  # draw the lives in the top right hand corner
 
-            if (
-                random.randrange(50) == 0 and time.time > 500 and not boss_spawned
-            ):  # randomly spawn the boss afer a certain amount of game time played
+
+            # Spawn a Boss Alien after a specified time has passed.
+            #
+            if random.randrange(50) == 0 and time.time > 500 and not boss_spawned:
                 boss = aliens.Boss(
                     random.random(),
                     random.uniform(0.5, 1),
@@ -118,42 +123,67 @@ class GameManager:   # class that defines the current instance of the game
                     False,
                     0,
                     0,
-                    player_one,
+                    player,
                     self.tally,
                     5
                 )
                 boss_spawned = True
 
+            # Check If All Aliens have been killed. 
+            #
             all_aliens_destroyed = True
-            for i in aliens_arr:  # check if all the aliens are dead
-                all_aliens_destroyed = all_aliens_destroyed and i.blown
+            for alien in aliens_arr:
+                all_aliens_destroyed = all_aliens_destroyed and alien.dead
+
             random_alien = aliens_arr[random.randrange(0, 24)]  # choose a random alien
 
-            while (
-                random_alien.x == 1 and random_alien.y == 1
-            ) and not all_aliens_destroyed:  # if that alien is dead keep trying to find an alive one
+            # If Chosen Alien Is Dead, Try Again
+            while random_alien.dead:
                 random_alien = aliens_arr[random.randrange(0, 24)]
-            if (
-                random.randrange(100) == 0 and bomb.y < 0
-            ):  # randomly drop a bomb from the random alien
+
+            # I've removed [(random_alien.x == 1 and random_alien.y == 1) and not all_aliens_destroyed] from the while
+            # condition. I think its redundant but if you run into an issue here, maybe thats why.
+
+            # Drop a bomb from the selected Alien.
+            # Chance is random, new roll each game loop.
+            if random.randrange(100) == 0 and bomb.y < 0: 
                 bomb.y = random_alien.y
                 bomb.x = random_alien.x
-            bomb.x_shooter = (
-                player_one.x
-            )  # update the x position of the shooter to the bomb
+                bomb.x_shooter = player.x # We Give the Bomb Our Players Position
 
-            # Update Game State
+            # TODO Maybe create a entity manager.
+            # When a hostile item is spawned, it is added to the 
+            # entity manager.
+            # The entity manager checks whether the player has
+            # been hit by an entity, and what to do with that info.
 
-            if player_one.update_shooter():  # if the shooter method that updates the shooter returns true return "end"
+            # -- Update Game State
+
+            # Call Shooter Update
+            # If the function returns True, the "x" key
+            # Has Been Pressed, and we quit the game.
+            if player.update_shooter():
                 return "game_quit"
-            if all_aliens_destroyed:  # if all aliens are dead end the level by returning "endLevel"
+            
+            # Player Has Beaten The Level
+            if all_aliens_destroyed: 
                 return "level_end" 
+            
+            # - Fail Conditions
+
+            # Has the player been hit
+            # by a bomb?
             if bomb_hit:
                 if self.update_game_over():
                     self.end_game()
                     stddraw.show(1000)
                     return "game_over"
-            if boss_spawned:  # check if the boss is alive and update his positon and check if he has hit anything
+            
+            # Manage The Boss Alien
+            # Check if it is Alive,
+            # Check if it has hit anything,
+            # Update its position.
+            if boss_spawned:
                 if boss.update_alien():
                     if self.update_game_over():
                         self.end_game()
@@ -161,11 +191,10 @@ class GameManager:   # class that defines the current instance of the game
                         return "game_over"
                     boss_spawned = False
 
-            for i in aliens_arr:  # check all of the aliens to see if they have killed the player
-                if i.update_alien():  # has an alien killed the player
-                    if (
-                        self.update_game_over()
-                    ):  # check if the player has enough lives
+            # Check Whether An Alien Has Killed The Player
+            for alien in aliens_arr:
+                if alien.update_alien():  # Has the alien hit the player?
+                    if self.update_game_over():  # Does the player have enough lives?
                         self.end_game()  # Display the gameover message
                         stddraw.show(1000)
                         return "game_over"
@@ -182,6 +211,7 @@ class GameManager:   # class that defines the current instance of the game
         else:
             return True
 
+    # Should Happen in Main
     def end_game(self):
         stddraw.setFontSize(30)
         stddraw.setPenColor(stddraw.RED)
