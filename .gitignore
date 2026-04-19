@@ -2,4 +2,4 @@
 *.swo
 *~
 .netrwhist
-data.txt
+data.json

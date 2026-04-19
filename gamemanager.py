@@ -6,7 +6,6 @@ import aliens
 import random
 import clock
 import bombs
-import gameover
 import constants
 import bunkers
 import leaderboard

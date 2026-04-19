@@ -1,6 +1,6 @@
 import stddraw  # type: ignore
 import stdaudio  # type: ignore
-import titlescreen, gamemanager, threading, highscore, score, leaderboard
+import titlescreen, gamemanager, threading, score, leaderboard
 
 
 # TODO Create a MusicManager 
