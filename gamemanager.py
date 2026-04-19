@@ -2,8 +2,6 @@ import stddraw  # type: ignore
 import shooter
 import math
 import aliens
-import main
-import score
 import random
 import clock
 import bombs
@@ -139,40 +137,30 @@ class GameManager:   # class that defines the current instance of the game
 
             # Update Game State
 
-            if (
-                player_one.update_shooter()
-            ):  # if the shooter method that updates the shooter returns true return "end"
+            if player_one.update_shooter():  # if the shooter method that updates the shooter returns true return "end"
                 return "game_quit"
-            if (
-                all_aliens_destroyed
-            ):  # if all aliens are dead end the level by returning "endLevel"
+            if all_aliens_destroyed:  # if all aliens are dead end the level by returning "endLevel"
                 return "level_end" 
             if bomb_hit:
                 if game_over.update_game_over():
                     game_over.end_game()
                     stddraw.show(1000)
-                    return "gameover"
-            if (
-                boss_spawned
-            ):  # check if the boss is alive and update his positon and check if he has hit anything
+                    return "game_over"
+            if boss_spawned:  # check if the boss is alive and update his positon and check if he has hit anything
                 if boss.update_alien():
                     if game_over.update_game_over():
                         game_over.end_game()
                         stddraw.show(1000)
-                        return "gameover"
+                        return "game_over"
                     boss_spawned = False
 
-            for (
-                i
-            ) in (
-                aliens_arr
-            ):  # check all of the aliens to see if they have killed the player
+            for i in aliens_arr:  # check all of the aliens to see if they have killed the player
                 if i.update_alien():  # has an alien killed the player
                     if (
                         game_over.update_game_over()
                     ):  # check if the player has enough lives
                         game_over.end_game()  # Display the gameover message
                         stddraw.show(1000)
-                        return "gameover"
+                        return "game_over"
 
             stddraw.show(10)

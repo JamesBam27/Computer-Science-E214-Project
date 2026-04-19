@@ -38,7 +38,7 @@ class Aliens:
                 i.x = -1 #move its position to off the screen
                 i.y=-1
                 self.kill_alien()
-                self.tally.add_score()
+                self.tally.increment()
         if (self.y < constants.BOTTOM_BOUND or (abs(self.shooter.x-self.x)<constants.ALIEN_HITBOX and abs(constants.SHOOTER_Y - self.y)<constants.ALIEN_HITBOX) ) and not self.blown: # if an alive alien hits the floor or the player remove a life or end the game
             self.kill_alien(True)
             return True

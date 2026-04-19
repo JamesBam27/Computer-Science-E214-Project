@@ -1,6 +1,7 @@
 # Blame: Robert van Woudenberg
 import stdio #type: ignore
 import os
+import json
 
 datafile_name = "data.txt"
 

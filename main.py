@@ -5,6 +5,7 @@ import gamemanager
 import threading
 import highscore
 import score
+import leaderboard
 
 
 # TODO Create a MusicManager
@@ -24,6 +25,14 @@ class Music:
 def main():
 
     # -- INITIALISATION
+
+    ## -- TEST
+
+    leaderBoard = leaderboard.LeaderBoardManager()
+
+    return
+
+    ## -- END TEST
 
     # Score and State Related Variables
     score_manager = highscore.highScore()  # Inititalise Score Manager
@@ -52,7 +61,7 @@ def main():
 
     # Create a gameplay object, pass in inital alient velocity and tally object parameters
     vAlien = 0.0005
-    game = gamemanager.GameManager(
+    gameManager = gamemanager.GameManager(
         vAlien, tally
     )
     
@@ -62,14 +71,14 @@ def main():
     while True: 
 
         # Run The Next Game Loop, Store The New Game State
-        game_state = gamemanager.play_game() 
+        game_state = gameManager.play_game() 
 
         if game_state == "level_end":  # if the .playGame() method returned "endlevel" # TODO level_end
 
             # The level has ended. Adjust parameters like level value and alien speed.
 
             vAlien = vAlien + 0.0008  # increase the speed of the alien
-            game.vAlien = vAlien  # update the value for the object
+            gameManager.vAlien = vAlien  # update the value for the object
             level += 1  # increase the level
 
             # TODO Get this display changing out of here and somewhere else
@@ -83,7 +92,7 @@ def main():
 
         elif game_state == "game_over": # TODO game_over
             # if the .gamePlay() method returned "gameover"
-            game.vAlien = 0.0005  # reset the alien speed
+            gameManager.vAlien = 0.0005  # reset the alien speed
             stddraw.setPenColor(stddraw.WHITE)  # reset the pen color
             stddraw.setFontSize(18)  # reset the font size
             level = 0  # reset the level
