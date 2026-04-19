@@ -1,15 +1,6 @@
 import stddraw  # type: ignore
 import stdaudio #type: ignore
-import shooter
-import math
-import aliens
-import random
-import clock
-import bombs
-import constants
-import bunkers
-import leaderboard
-import threading
+import shooter, math, aliens, random, clock, bombs, constants, bunkers, leaderboard, threading
 
 # TODO Make this readable and convert to GameManager
 # The strat might be to create a new GameManager class,
@@ -41,16 +32,12 @@ class GameManager:   # class that defines the current instance of the game
         vx = 0  # starting velocity of shooter in the x direction
         angle = math.pi / 2  # starting angle of turret
         av = 0  # starting angular velocity of turret
-
         bullet = []  # create an array of bullet objects as an empty array
-        player_one = shooter.Shooter(
-            x, vx, angle, av, bullet, time_shot
-        )  # create a Shooter object with the initial values specified above
+        player_one = shooter.Shooter(x, vx, angle, av, bullet, time_shot)  # create a Shooter object with the initial values specified above
+        
         x_alien = 0.1  # starting alien position
         y_alien = 0.9  # starting alien position
-        vx_alien = (
-            self.alien_velocity
-        )  # set the initial alien velocity to that of the game instance
+        vx_alien = self.alien_velocity  # set the initial alien velocity to that of the game instance
         aliens_arr = []  # inintialise an empty array to store the aliens
 
         for i in range(12):  # initialise 24 aliens in two rows
@@ -67,6 +54,7 @@ class GameManager:   # class that defines the current instance of the game
                     self.tally
                 )
             ]
+
         for i in range(12):
             aliens_arr += [
                 aliens.Aliens(
@@ -81,7 +69,7 @@ class GameManager:   # class that defines the current instance of the game
                     self.tally
                 )
             ]
-        blown = False  # **
+
         random_alien = aliens_arr[
             random.randrange(0, 24)
         ]  # choose a random alien to shoot the bomb

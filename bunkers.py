@@ -1,9 +1,9 @@
-import stddraw
+import stddraw #type: ignore
 import aliens
 import bombs
 import shooter
 import constants
-from picture import Picture
+from picture import Picture #type: ignore
 class Bunker():
     def __init__(self,x,y,health,bullet,bomb,alien):
         self.x = x
