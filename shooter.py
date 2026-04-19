@@ -10,9 +10,9 @@ class Bullet:#class to represent a bullet shot by the player
     def __init__(self,x,y,angle,v):
         self.x=x#set the x position
         self.y =y#set the y position
-        self.angle =angle#set the angle
+        self.angle =angle#set the angle it should travel at
         self.v =v#set the velocity
-    def kill_bullet(self):
+    def kill_bullet(self):#put the bullet off the screen
         self.y=-1
         self.x=-1
 
@@ -25,7 +25,9 @@ class Bullet:#class to represent a bullet shot by the player
 
 def curser(x,y,angle):#function to update and draw the turret 
     y = y + 0.015
+    stddraw.setPenColor(stddraw.ORANGE)
     stddraw.line(x,y,x + math.cos(angle)/25,y+math.sin(angle)/25)
+    stddraw.setPenColor(stddraw.WHITE)
 
 def play_sound(): #function that plays the bullet sound
     stdaudio.playFile("./Assets/audio/Lazer")
@@ -36,8 +38,8 @@ class Shooter: #class that defines the player
         self.x = x #set the x position
         self.vx = vx#set the x velocity
         self.angle_v =av#set the angular velocity
-        self.angle =a#set the angle
-        self.bullet = bullet #set the array of bullets
+        self.angle =a#set the angle of the turret
+        self.bullet = bullet #set the array of bullets currently on the screen
         self.time = time #set the Clock object of the time
         self.ship = Picture("./Assets/img/ship2.png")#create the picture object of the shooter
         self.vx_positive = 0.005 #set the positive x velocity
@@ -46,9 +48,9 @@ class Shooter: #class that defines the player
         self.angle_v_negative =-0.01#set the negative angular velocity of the turret
 
 
-    def update_shooter(self):#method that update the infomation on the shooter and perform all logic of the shooter
+    def update_shooter(self):#method that updates the infomation on the shooter and performs all logic of the shooter
         if stddraw.hasNextKeyTyped(): #check if a key has been typed
-            key = stddraw.nextKeyTyped() #store the key that was most reacently typed
+            key = stddraw.nextKeyTyped() 
             if key == "d":
                 self.vx = self.vx_positive #move right
             else:
@@ -70,7 +72,7 @@ class Shooter: #class that defines the player
                                     self.angle_v = self.angle_v_negative #move the turret anticlockwise
                                 else:
                                     if key == "q":
-                                        self.angle_v  =self.angle_v_positive #move the turet clockwise
+                                        self.angle_v  =self.angle_v_positive #move the turret clockwise
                                     else:
                                         if key == "w":
                                             self.angle_v = 0 #stop the turret
@@ -91,20 +93,3 @@ class Shooter: #class that defines the player
         self.x = self.x + self.vx#move the shooter
         stddraw.picture(self.ship,self.x,constants.SHOOTER_Y)#draw the shooter
 
-def main():
-    x = 0.5
-    vx =0
-    xs = 0.5
-    ys = 0.15
-    shot =False
-    a = math.pi/2
-    av =0
-    bullet = Bullet(xs,ys,a,0.01)
-    playerone = Shooter(x,vx,shot,xs,ys,a,av,bullet)
-
-    while True:
-        stddraw.clear()
-        playerone.shooter()
-        stddraw.show(10)
-
-if __name__ == "__main__": main()

@@ -33,10 +33,8 @@ def main():
     # Canvas
     stddraw.setCanvasSize(1000, 1000)  # Set the canvas size to 1000 x 1000   
     titlescreen.displayTitleScreen()  # set the title screen on the canvas
-    stddraw.setPenColor(stddraw.BLACK)  # change pen color to black
-    
-    # Create Music Object and Thread Music To Play While Program Executes
-    tunes = Music() 
+    stddraw.setPenColor(stddraw.WHITE)  # change pen color to black
+    tunes = Music()  # create a music object
     threading.Thread(
         target=tunes.play_music, daemon=True
     ).start() 
@@ -70,7 +68,7 @@ def main():
 
             # The level has ended. Adjust parameters like level value and alien speed.
 
-            vAlien = vAlien + 0.0025  # increase the speed of the alien
+            vAlien = vAlien + 0.0008  # increase the speed of the alien
             game.vAlien = vAlien  # update the value for the object
             level += 1  # increase the level
 
@@ -86,7 +84,7 @@ def main():
         elif game_state == "game_over": # TODO game_over
             # if the .gamePlay() method returned "gameover"
             game.vAlien = 0.0005  # reset the alien speed
-            stddraw.setPenColor(stddraw.BLACK)  # reset the pen color
+            stddraw.setPenColor(stddraw.WHITE)  # reset the pen color
             stddraw.setFontSize(18)  # reset the font size
             level = 0  # reset the level
             tally.score = 0  # reset the score

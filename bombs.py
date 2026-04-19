@@ -6,13 +6,12 @@ import random
 import threading
 
 class Bomb(): #class that represents a bomb which is to fall from the aliens
-    def __init__(self,y,x,x_shooter,y_shooter,game_over): 
+    def __init__(self,y,x,x_shooter,y_shooter): 
         self.y = y #set the y coordinate
         self.x = x#set the x coordinate
         self.x_shooter = x_shooter#set the xposition of the shooter
         self.y_shooter = y_shooter#set the y position of the shooter
         self.bomb = Picture("./Assets/img/bomb2.png")#set the picture of the bomb
-        self.game_over = game_over#set the gameover object
     def kill_bomb(self):
         self.y = -1
 

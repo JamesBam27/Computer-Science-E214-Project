@@ -1,0 +1,562 @@
+import stddraw #type: ignore
+import stdaudio #type: ignore
+from picture import Picture #type: ignore
+import clock
+import score
+import math
+import threading
+import random
+import constants
+    
+class Aliens:
+    def __init__(self,x,y,v_x,bullet,blown,width,length,shooter,tally,time,game_over):
+        self.x= x#set the x position
+        self.y = y#set the y position
+        self.v_x = v_x#set the x velocity
+        self.bullet = bullet#set the array of bullets
+        self.blown = blown#set if the aliens is dead or alive
+        self.width = width#set the right boundary for the alien
+        self.length = length#set the left boundary for the alien
+        self.shooter = shooter#set the shooter object
+        self.tally = tally#set the score
+        self.time = time#set the time
+        self.game_over = game_over #set the gameover object
+        self.alien = Picture("./Assets/img/Alien.png")
+    def kill_alien(self,game_over= False): 
+        self.x = 1
+        self.y= 1
+        self.width = 0
+        self.length = 0
+        self.v_x = 0 #stop the alien
+        self.blown = True
+
+
+    def update_alien(self):
+        if not self.length<=self.x<=constants.RIGHT_BOUND-self.width: #if the alien reaches its boundary turn it around and move it down
+            self.v_x = -self.v_x
+            self.y =self.y - 0.05
+        self.x = self.x + self.v_x #move the alien in the x direction
+        
+        for i in self.bullet:#check all the bullets
+            if (abs(self.x-i.x)<constants.ALIEN_HITBOX and abs(self.y - i.y)<constants.ALIEN_HITBOX): #if it is too close to the alien kill the alien 
+                i.x = -1 #move its position to off the screen
+                i.y=-1
+                self.kill_alien()
+                self.tally.add_score()
+        if (self.y < constants.BOTTOM_BOUND or (abs(self.shooter.x-self.x)<constants.ALIEN_HITBOX and abs(constants.SHOOTER_Y - self.y)<constants.ALIEN_HITBOX) ) and not self.blown: # if an alive alien hits the floor or the player remove a life or end the game
+            self.kill_alien(True)
+            return True
+        if not self.blown:# draw the alien only if it is alive
+            stddraw.picture(self.alien,self.x,self.y)
+        return False
+class Boss(Aliens): #boss class that inherits from the alien class: same as alien except the boss has lives and has to be hit a certain amout of times to die
+    def __init__(self,x,y,v_x,bullet,blown,width,length,shooter,tally,time,game_over,health):
+        super().__init__(x,y,v_x,bullet,blown,width,length,shooter,tally,time,game_over) #call the parents constructor
+        self.health = health
+        self.change_alien()
+    def change_alien(self):#have a diffrent picture
+        self.alien = Picture("./Assets/img/Alien2.png")
+    def kill_alien(self,game_over=False):
+        if self.health>0 and not game_over:
+            self.health -= 1
+        else:
+            super().kill_alien()
+
+
+import stddraw #type: ignore
+import stdaudio #type: ignore
+from picture import Picture #type: ignore
+import clock
+import random
+import threading
+
+class Bomb(): #class that represents a bomb which is to fall from the aliens
+    def __init__(self,y,x,x_shooter,y_shooter,game_over): 
+        self.y = y #set the y coordinate
+        self.x = x#set the x coordinate
+        self.x_shooter = x_shooter#set the xposition of the shooter
+        self.y_shooter = y_shooter#set the y position of the shooter
+        self.bomb = Picture("./Assets/img/bomb2.png")#set the picture of the bomb
+        self.game_over = game_over#set the gameover object
+    def kill_bomb(self):
+        self.y = -1
+
+    def bomb_update(self):#move the bomb and check if it has hit a player
+        velocity_y = -0.01#set the velocity
+        self.y = self.y  + velocity_y#move it down
+        stddraw.picture(self.bomb,self.x,self.y)#draw the bomb
+        if abs(self.x_shooter - self.x)<0.025 and abs(self.y_shooter - self.y)<0.025:#check if it got too close the the shooter and if it did take a life
+           self.y = -1
+           return True
+        return False
+        
+def main():
+   bomb = Bomb(1,random.random(),0,0)
+   while True:
+       stddraw.clear()
+       bomb.bomb_update()
+       if (random.randrange(100) == 0 and bomb.y<0):
+          bomb.y = 1
+          bomb.x = random.random()
+       stddraw.show(10)
+if __name__ == "__main__": main()
+import stddraw
+import aliens
+import bombs
+import shooter
+import constants
+from picture import Picture
+class Bunker():
+    def __init__(self,x,y,health,bullet,bomb,alien):
+        self.x = x
+        self.y  =y
+        self.health = health
+        self.bullet = bullet
+        self.bomb  =bomb
+        self.alien = alien
+        self.bunker = Picture("./Assets/img/bunker.png")
+    def update_bunker(self):
+        if self.health>0:
+            for i in self.bullet:
+                if abs(i.x-self.x) <=0.1 and abs(i.y-self.y)<=0.1:
+                    self.health -=1
+                    i.kill_bullet()
+            if abs(self.bomb.x-self.x) <=0.1 and abs(self.bomb.y-self.y)<=0.1:
+                self.health -=1
+                self.bomb.kill_bomb()
+            for i in self.alien:
+                if abs(i.x-self.x) <=0.1 and abs(i.y-self.y)<=0.1:
+                    self.health -=1
+                    i.kill_alien()
+            stddraw.picture(self.bunker,self.x,self.y)
+
+
+
+class Clock:#class to represent time
+    def __init__(self,time):#set the time
+        self.time = time
+
+    def updateTime(self):#add one to the time
+        self.time +=1	
+
+# Movement
+BOMB_SPEED = -0.01
+BULLET_SPEED = 0.05
+
+# Positions
+SHOOTER_Y = 0.15
+
+# Hitboxes
+ALIEN_HITBOX = 0.05
+BOMB_HITBOX = 0.025
+
+# Screen bounds
+LEFT_BOUND = 0
+RIGHT_BOUND = 1
+TOP_BOUND = 1
+BOTTOM_BOUND = 0
+import stddraw #type: ignore
+import stdaudio #type: ignore
+import threading
+
+def play_gameover():
+   stdaudio.playFile("./Assets/audio/gameover")
+class GameOver:
+    def __init__(self):
+        self.lives = 3
+    def update_game_over(self):
+        if self.lives>0:
+            self.lives -=1
+            return False
+        else:
+            return True
+    def end_game(self):
+        stddraw.setFontSize(30)
+        stddraw.setPenColor(stddraw.RED)
+        stddraw.text(0.5,0.5,"Game Over")
+        threading.Thread(target=play_gameover,daemon=True).start()
+        
+import stddraw #type: ignore
+import shooter
+import math
+import aliens
+import main
+import score
+import random
+import clock
+import bombs
+import gameover
+
+# TODO Make this readable and convert to GameManager
+# The strat might be to create a new GameManager class,
+# and then just use this file as a framework to build
+# the GameManager off of. Feel it out. 
+
+import constants
+import bunkers
+class GamePlay:#class that defines the current instance of the game
+    def __init__(self,vAlien,tally):
+        self.vAlien = vAlien# speed of the alien
+        self.tally = tally# score 
+
+    def play_game(self):
+        game_over = gameover.GameOver()
+        time_shot = clock.Clock(0) #create a clock object to track the time between bullets shot
+        time = clock.Clock(0) #create a clock object to track the game time
+        x = 0.5 #starting x position for shooter
+        vx =0 #starting velocity of shooter
+        angle = math.pi/2 #starting angle of turret
+        av =0 #starting angular velocity of turret
+        bullet =[] #create an array of bullet objects as an empty array
+        player_one = shooter.Shooter(x,vx,angle,av,bullet,time_shot) #create a Shooter object with the initial values specified above
+        xAlien = 0.1 #starting alien position
+        yAlien = 0.9 #starting alien position
+        vxAlien = self.vAlien  #set the initial alien velocity to that of the game instance
+        aliens_arr = [] #inintialise an empty array to store the aliens
+        for i in range(12): #initialise 24 aliens in two rows
+            aliens_arr += [aliens.Aliens(xAlien + constants.ALIEN_HITBOX*(i+1),yAlien,vxAlien,bullet,False,0.55-constants.ALIEN_HITBOX*i,constants.ALIEN_HITBOX*i,player_one,self.tally,time,game_over)]
+        for i in range(12):
+            aliens_arr += [aliens.Aliens(xAlien+ constants.ALIEN_HITBOX*(i+1),yAlien - constants.ALIEN_HITBOX,vxAlien,bullet,False,0.55-constants.ALIEN_HITBOX*i,constants.ALIEN_HITBOX*i,player_one,self.tally,time,game_over)]
+        blown = False #**
+        random_alien = aliens_arr[random.randrange(0,24)] #choose a random alien to shoot the bomb
+        bomb = bombs.Bomb(random_alien.x,random_alien.y,player_one.x,constants.SHOOTER_Y,game_over) 
+        bunker1= bunkers.Bunker(0.2,0.4,3,bullet,bomb,aliens_arr) #initialise the bunkers
+        boss_spawned = False
+        bunker2 = bunkers.Bunker(0.8,0.4,3,bullet,bomb,aliens_arr)
+        while True: #keep the game running
+            time.updateTime() #add to the time for the game time
+            time_shot.updateTime() #add to the time for the time between shots
+            stddraw.clear(stddraw.BLACK) #set the canvas to green
+            bunker1.update_bunker() #check the state of the bunkers
+            bunker2.update_bunker()
+            self.tally.update_score()#update the score board
+            bomb_hit = bomb.bomb_update()#update the bombs
+            stddraw.text(0.1,0.9,"Lives: " +str(game_over.lives)) #draw the lives in the top right hand corner
+            if random.randrange(50) == 0 and time.time>500 and not boss_spawned: #randomly spawn the boss afer a certain amount of game time played
+                boss = aliens.Boss(random.random(),random.uniform(0.5,1),vxAlien+0.002,bullet,False,0,0,player_one,self.tally,time,game_over,5)
+                boss_spawned = True
+            all_aliens_destroyed = True
+            for i in aliens_arr: # check if all the aliens are dead
+                all_aliens_destroyed = all_aliens_destroyed and i.blown
+            random_alien = aliens_arr[random.randrange(0,24)] # choose a random alien
+
+            while (random_alien.x ==1 and random_alien.y == 1) and not all_aliens_destroyed: #if that alien is dead keep trying to find an alive one
+                random_alien = aliens_arr[random.randrange(0,24)] 
+            if random.randrange(100) == 0 and bomb.y<0: #randomly drop a bomb from the random alien
+               bomb.y =random_alien.y
+               bomb.x = random_alien.x
+            bomb.x_shooter = player_one.x #update the x position of the shooter to the bomb 
+            if player_one.update_shooter(): #if the shooter method that updates the shooter returns true return "end"
+                return "end"
+            if all_aliens_destroyed: #if all aliens are dead end the level by returning "endLevel"
+                return "endLevel"
+            if bomb_hit:
+                if game_over.update_game_over():
+                    game_over.end_game()
+                    stddraw.show(1000)
+                    return "gameover"
+            if boss_spawned: #check if the boss is alive and update his positon and check if he has hit anything
+                if boss.update_alien():
+                    if game_over.update_game_over():
+                        game_over.end_game()
+                        stddraw.show(1000)
+                        return "gameover"
+                    boss_spawned = False
+
+            for i in aliens_arr: #check all of the aliens to see if they have killed the player
+               if i.update_alien(): #has an alien killed the player
+                   if game_over.update_game_over():#check if the player has enough lives
+                       game_over.end_game()# Display the gameover message
+                       stddraw.show(1000)
+                       return "gameover"
+
+            stddraw.show(10)
+
+# Blame: Robert van Woudenberg
+import stdio #type: ignore
+import os
+
+datafile_name = "data.txt"
+
+class highScore:
+
+    def update(self, newscore):
+        # - Check if the newscore is greater than the current highscore
+        # - If it is: return true, save new highscore
+        # - If not: return false, do nothing
+
+        currscore = self.get()
+
+        if (newscore > currscore):
+            self._set(newscore)
+            return True
+        else:
+            return False
+
+    def reset(newscore):
+        with open(datafile_name, "w") as file:
+            file.write("0")
+            file.close()
+
+    def get(self):
+        # Return Current Highscore
+        with open(datafile_name, "r") as file:
+            content = file.read().split('\n')
+            file.close()
+            return int(content[0])
+        
+    def _set(self, newscore):
+        # Set New Highscore
+        oldscore = self.get()
+
+        with open(datafile_name, "w") as file:
+            file.write(str(newscore))
+            file.close()
+        
+        return oldscore
+
+    def __init__(self):
+        # On init, we check if a data file exists
+        # If it does not, we create one
+
+        if (os.path.exists("./data.txt")):
+            with open(datafile_name, "r") as file:
+                content = file.read().split('\n')
+
+                # If the stored data is not an integer, we cannot read a valid score
+                # We try to get the first line as an int
+                try: 
+                    int(content[0]) 
+                except:
+                    file.close()
+                    self.reset() # If it fails, we reset the file
+                else:
+                    file.close() # If it passes, we just close the file
+
+        else:
+            with open(datafile_name, "w") as file:
+                stdio.writeln("Data file did not exist. Created.")
+                file.write("0")
+                file.close()
+
+# TODO
+# Currently updating the highscore in score.py.
+# Need a better way of managing the score vs highscore.
+# Possibly have scoreManager and highscoreManager as seperate objects.
+# A bit unncessary but should work well here.
+# Look at having a drawManager for drawing stuff like the currentScore
+# when you work on this next.
+import stddraw  # type: ignore
+import stdaudio  # type: ignore
+import stdio  # type: ignore
+import titlescreen
+import gameplay
+import threading
+import highscore
+import score
+
+
+# TODO Create a MusicManager
+# TODO Group initialisation etc. Make it easier to read. 
+
+# Music class controls and plays the titlescreen music
+class Music:
+
+    def __init__(self):
+        self.play = True
+
+    def play_music(self):
+        while self.play:
+            stdaudio.playFile("./Assets/audio/music")
+
+
+def main():
+    stddraw.setCanvasSize(1000, 1000)  # Set the canvas size to 1000 x 1000
+    score_manager = highscore.highScore()  # Inititalise Score Manager
+    tally = score.ScoreBoard()  # create a ScoreBoard object
+    titlescreen.displayTitleScreen()  # set the title screen on the canvas
+    stddraw.setPenColor(stddraw.WHITE)  # change pen color to black
+    tunes = Music()  # create a music object
+    threading.Thread(
+        target=tunes.play_music, daemon=True
+    ).start()  # thread the music to play while the rest of the program executes
+    while True:
+        if stddraw.hasNextKeyTyped():  # check if a key is pressed
+            key = stddraw.nextKeyTyped()
+            tunes.play = False  # end the music
+            stddraw.clear()  # clear the title screen
+            break  # end the title screen loop
+        stddraw.show(10)  # keep displaying the title screen
+
+    vAlien = 0.0005  # set the starting alien speed
+    game = gameplay.GamePlay(
+        vAlien, tally
+    )  # create a gameplay object with the initial alien speed and score
+    game_status = game.play_game()  # play the game
+    level = 0  # set level to 0
+    while True:  # game loop
+        if game_status == "endLevel":  # if the .playGame() method returned "endlevel"
+            vAlien = vAlien + 0.0008  # increase the speed of the alien
+            game.vAlien = vAlien  # update the value for the object
+            level += 1  # increase the level
+            stddraw.setFontSize(50)  # change the font size to 50
+            stddraw.text(
+                0.5, 0.5, "level " + str(level)
+            )  # Display the level in the middle of the screen
+            stddraw.show(1000)  # wait a second to dispaly the level
+            stddraw.setFontSize(18)  # reset the font size
+        else:
+            if (
+                game_status == "gameover"
+            ):  # if the .gamePlay() method returned "gameover"
+                game.vAlien = 0.0005  # reset the alien speed
+                stddraw.setPenColor(stddraw.WHITE)  # reset the pen color
+                stddraw.setFontSize(18)  # reset the font size
+                level = 0  # reset the level
+                tally.score = 0  # reset the score
+            else:
+                if game_status == "end":  # if the .gamePlay() method returned "end"
+                    break  # end the game
+        game_status = game.play_game()  # play the game again
+
+
+if __name__ == "__main__": main()
+
+
+import stddraw #type: ignore
+import highscore
+
+class ScoreBoard:#class to keep the players score
+
+   def __init__(self):
+       self.score = 0 #start with a score of 0
+       self.highscoreManager = highscore.highScore() #create a highscore manager object
+
+   def update_score(self): #display the score in the top right hand coner
+      stddraw.text(0.8,0.9,"Score: " + str(self.score)) 
+      self.highscoreManager.update(self.score)
+      
+   def add_score(self): #add one to the score
+      self.score  +=1
+import stddraw #type: ignore
+import stdaudio #type: ignore
+from picture import Picture #type: ignore
+import math
+import threading
+import constants
+
+class Bullet:#class to represent a bullet shot by the player
+
+    def __init__(self,x,y,angle,v):
+        self.x=x#set the x position
+        self.y =y#set the y position
+        self.angle =angle#set the angle it should travel at
+        self.v =v#set the velocity
+    def kill_bullet(self):#put the bullet off the screen
+        self.y=-1
+        self.x=-1
+
+    def shoot(self): #update the position of the bullet and display it on the screen
+        vx = math.cos(self.angle) * self.v
+        vy = math.sin(self.angle) *self.v
+        self.x = self.x + vx
+        self.y = self.y + vy
+        stddraw.point(self.x,self.y)
+
+def curser(x,y,angle):#function to update and draw the turret 
+    y = y + 0.015
+    stddraw.setPenColor(stddraw.ORANGE)
+    stddraw.line(x,y,x + math.cos(angle)/25,y+math.sin(angle)/25)
+    stddraw.setPenColor(stddraw.WHITE)
+
+def play_sound(): #function that plays the bullet sound
+    stdaudio.playFile("./Assets/audio/Lazer")
+
+class Shooter: #class that defines the player
+    
+    def __init__(self,x,vx,a,av,bullet,time):
+        self.x = x #set the x position
+        self.vx = vx#set the x velocity
+        self.angle_v =av#set the angular velocity
+        self.angle =a#set the angle of the turret
+        self.bullet = bullet #set the array of bullets currently on the screen
+        self.time = time #set the Clock object of the time
+        self.ship = Picture("./Assets/img/ship2.png")#create the picture object of the shooter
+        self.vx_positive = 0.005 #set the positive x velocity
+        self.vx_negative = -0.005#set the negative x velocity
+        self.angle_v_positive = 0.01#set the positive angular velocity of the turret
+        self.angle_v_negative =-0.01#set the negative angular velocity of the turret
+
+
+    def update_shooter(self):#method that updates the infomation on the shooter and performs all logic of the shooter
+        if stddraw.hasNextKeyTyped(): #check if a key has been typed
+            key = stddraw.nextKeyTyped() 
+            if key == "d":
+                self.vx = self.vx_positive #move right
+            else:
+                if key == "a":
+                    self.vx  =self.vx_negative#move left
+                else:
+                    if key == "s":
+                        self.vx = 0 #stop
+                    else:
+                        if key =="x":
+                            return True #close the program
+                        else:
+                            if key == " " and (self.time.time>5): #shoot the bullet only after a certain amount of time from the last one
+                                threading.Thread(target=play_sound).start()#play the bullet sound
+                                self.time.time = 0 #reset the shot timer
+                                self.bullet += [Bullet(self.x,0.15,self.angle,constants.BULLET_SPEED)] #add a bullet to the bullet array
+                            else:
+                                if key == "e":
+                                    self.angle_v = self.angle_v_negative #move the turret anticlockwise
+                                else:
+                                    if key == "q":
+                                        self.angle_v  =self.angle_v_positive #move the turret clockwise
+                                    else:
+                                        if key == "w":
+                                            self.angle_v = 0 #stop the turret
+                                        
+
+        self.angle = self.angle  +self.angle_v #move the turret
+        if not  0<self.angle<math.pi: #if the turret has an angle less than zero and greater than 90 degrees turn the turret around
+            self.angle_v =-self.angle_v
+        curser(self.x,constants.SHOOTER_Y,self.angle) #update and draw the curser
+        for i in self.bullet[:]: #check all the bullets
+            if not (constants.LEFT_BOUND<i.x<constants.RIGHT_BOUND and constants.BOTTOM_BOUND<i.y<constants.TOP_BOUND):#if they are off the screen remove the alien for the list
+               self.bullet.remove(i)
+            else:
+                i.shoot() #update the position and draw all the bullets
+
+        if self.x <constants.LEFT_BOUND or self.x>constants.RIGHT_BOUND:#if the shooter reaches the end of the screen turn around
+            self.vx = -self.vx
+        self.x = self.x + self.vx#move the shooter
+        stddraw.picture(self.ship,self.x,constants.SHOOTER_Y)#draw the shooter
+
+import stddraw #type: ignore
+
+def setScale(x=1,y=1):
+    stddraw.setXscale(0,x)
+    stddraw.setYscale(0,y)
+
+def displayTitleScreen():
+
+    # Init and Draw Title
+    stddraw.clear(stddraw.BLACK)	
+    setScale(1,1)
+    stddraw.setFontSize(50)
+    stddraw.setPenColor(stddraw.GREEN)
+    stddraw.text(0.5,0.9,"ALIEN INVADERS")
+
+    # Draw Heading
+    stddraw.setFontSize(35)
+ 
+    stddraw.text(0.5,0.7,"Instructions")
+
+    # Draw Instructions
+    stddraw.setFontSize(18)
+    stddraw.text(0.5,0.6,"[A] move left,[S] stop, [D] move right")
+    stddraw.text(0.5,0.5,"[Q] Rotate left, [W] stop rotate, [E] rotate right")
+    stddraw.text(0.5,0.4,"[Space] to shoot")
+    stddraw.text(0.5,0.2,"[X] to quit")
+    stddraw.text(0.5,0.1,"PRESS ANY KEY TO START")
