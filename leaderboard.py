@@ -6,12 +6,7 @@ datafile_name = "data.json"
 
 class LeaderBoardManager():
 
-    # Should technically make this class a Singleton but I don't think
-    # its worth complicating it. We just must not create more than one
-    # instance of this class.
-
     # The Player will choose between 4 "save slots" when they begin the game.
-    # By Default, save 1 will be selected. 
 
 
     # Update The Current Highscore of the Selected Player, We Handle The Logic Ourselves
@@ -39,15 +34,11 @@ class LeaderBoardManager():
     # Write a new Score Value for the Selected Player to the Data File
     def _set(self, newscore, player):
         
-        old = self.get_score(player)
-        
         content = self.get_data()
         content[str(player)]['score'] = newscore
 
         with open(datafile_name, "w") as file:
             json.dump(content, file)
-        
-        return self.get_score(player)
     
     # Reset all Saved Scores to Zero
     def reset(self):

@@ -1,4 +1,4 @@
-import stddraw  # type: ignore
+import stddraw  #type: ignore
 import stdaudio #type: ignore
 import shooter, math, aliens, random, clock, bombs, constants, bunkers, leaderboard, threading
 
