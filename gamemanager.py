@@ -142,7 +142,7 @@ class GameManager:   # class that defines the current instance of the game
             random_alien = aliens_arr[random.randrange(0, 24)]  # choose a random alien
 
             # If Chosen Alien Is Dead, Try Again
-            while random_alien.dead:
+            while random_alien.dead and not all_aliens_destroyed:
                 random_alien = aliens_arr[random.randrange(0, 24)]
 
             # I've removed [(random_alien.x == 1 and random_alien.y == 1) and not all_aliens_destroyed] from the while
