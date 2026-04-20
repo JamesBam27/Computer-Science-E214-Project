@@ -97,7 +97,7 @@ def main():
             gameManager.player_lives = 3
 
         # If the game has ended, exit the game loop
-        elif game_state == "game_quit": # if the .gamePlay() method returned "end" # TODO game_quit
+        elif game_state == "game_quit": 
             break
 
 

@@ -42,6 +42,8 @@ class GameManager:   # class that defines the current instance of the game
 
         # Spawn All 24 Aliens, in 2 rows of 12
 
+        # TODO Alien Manager
+
         for i in range(12):
             aliens_arr += [
                 aliens.Aliens(
@@ -71,6 +73,8 @@ class GameManager:   # class that defines the current instance of the game
                     self.tally
                 )
             ]
+
+        # TODO Alien Manager
 
         # Pick a random alien and drop an initial bomb.
         # Game loop will throw and error if bomb is not
@@ -200,9 +204,6 @@ class GameManager:   # class that defines the current instance of the game
                         return "game_over"
 
             stddraw.show(10)
-
-    def end_end_game(self):
-        pass
 
     def update_game_over(self):
         if self.player_lives > 0:
