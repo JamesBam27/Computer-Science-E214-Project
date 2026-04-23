@@ -101,6 +101,9 @@ class GameManager:   # class that defines the current instance of the game
             time.updateTime()  # add to the time for the game time
             time_shot.updateTime()  # add to the time for the time between shots
             stddraw.clear(stddraw.BLACK)
+
+            # TODO ENTITY MANAGER
+
             bunker1.update_bunker()
             bunker2.update_bunker()
 
@@ -111,9 +114,9 @@ class GameManager:   # class that defines the current instance of the game
 
             self.tally.update_score(self.selected_player)  # update the score board
             bomb_hit = bomb.bomb_update()  # update the bombs
-            stddraw.text(
-                0.1, 0.9, "Lives: " + str(self.player_lives)
-            )  # draw the lives in the top right hand corner
+            
+            # Draw Count of Player's Lives
+            stddraw.text(0.1, 0.9, "Lives: " + str(self.player_lives)) 
 
 
             # Spawn a Boss Alien after a specified time has passed.
@@ -162,6 +165,8 @@ class GameManager:   # class that defines the current instance of the game
             # been hit by an entity, and what to do with that info.
 
             # -- Update Game State
+
+
 
             # Call Shooter Update
             # If the function returns True, the "x" key

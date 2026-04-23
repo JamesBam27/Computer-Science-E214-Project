@@ -27,7 +27,7 @@ class Aliens:
         #if the alien reaches its boundary turn it around and move it down
         if not self.left_bound<=self.x<=constants.RIGHT_BOUND-self.right_bound:
             self.v_x = -self.v_x
-            self.y =self.y - 0.05
+            self.y = self.y - 0.05
         self.x = self.x + self.v_x #move the alien in the x direction
         
         #check all the bullets

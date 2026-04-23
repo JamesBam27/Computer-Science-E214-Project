@@ -12,13 +12,14 @@ class Bullet:#class to represent a bullet shot by the player
         self.y =y#set the y position
         self.angle =angle#set the angle it should travel at
         self.v =v#set the velocity
+    
     def kill_bullet(self):#put the bullet off the screen
         self.y=-1
         self.x=-1
 
     def shoot(self): #update the position of the bullet and display it on the screen
         vx = math.cos(self.angle) * self.v
-        vy = math.sin(self.angle) *self.v
+        vy = math.sin(self.angle) * self.v
         self.x = self.x + vx
         self.y = self.y + vy
         stddraw.point(self.x,self.y)
