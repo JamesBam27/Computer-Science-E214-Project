@@ -5,11 +5,16 @@ import shooter, math, aliens, random, clock, bombs, constants, bunkers, leaderbo
 
 class EntityManager():
 
-    def __init__(self, alien_count, alien_rows, gamemanager):
+    def __init__(self, alien_count, alien_rows, gamemanager, manager_clock, player_reference):
         self._alien_count = alien_count
         self._alien_rows = alien_rows
         self._gamemanager = gamemanager
         self._aliens = []
+        self._clock_manager = manager_clock
+        self._bomb_interval = 100
+        self._last_bomb_time = 0
+        self._bombs = []
+        self._player_ref = player_reference
 
         self.spawn_aliens()
  
@@ -44,13 +49,54 @@ class EntityManager():
                     False,
                     0.55 - constants.ALIEN_HITBOX * i,
                     constants.ALIEN_HITBOX * i,
-                    shooter.Shooter(0, 0, 0, 0, None, None),
                     score.ScoreBoard(),
                 )
 
                 self._aliens.append(new_alien)            
 
         return self._aliens
+    
+    def manage_bombing(self):
+        time_delta = self._clock_manager.get_time() - self._last_bomb_time
+
+        #stdio.writeln(time_delta)
+
+        if time_delta >= self._bomb_interval:
+            self._last_bomb_time = self._clock_manager.get_time()
+            self.spawn_bomb()
+
+        self.update_bombs()
+            
+
+    def spawn_bomb(self):
+        aliens_alive = []
+
+        for alien in self._aliens:
+            if alien.dead == False:
+                aliens_alive.append(alien)
+
+        self._aliens = aliens_alive
+
+        alien_random = self._aliens[random.randrange(0, self._alien_count)]
+
+        bomb = bombs.Bomb(alien_random.x, alien_random.y)
+
+        stdio.writeln("Bomb Spawned at : " + str(alien_random.x) + " " + str(alien_random.y))
+        
+        self._bombs.append(bomb)
+
+    def update_bombs(self):
+
+        for bomb in self._bombs[:]:
+            if not bomb.alive:
+                self._bombs.remove(bomb)
+            else:
+                bomb.update_position()
+                player_hit = bomb.check_collision(self._player_ref.x)
+
+                if player_hit:
+                    self._gamemanager.player_hit()
+
 
     def update_aliens(self, aliens):
         pass
@@ -72,43 +118,4 @@ class EntityManager():
 """
 Reference code for alien spawning
 
-# Alien Initial Parameters
-        x_alien = 0.1  # starting alien position
-        y_alien = 0.9  # starting alien position
-        vx_alien = (
-            self.alien_velocity
-        )  # set the initial alien velocity to that of the game instance
-        aliens_arr = []  # inintialise an empty array to store the aliens
-
-        # Spawn All 24 Aliens, in 2 rows of 12
-
-        for i in range(12):
-            aliens_arr += [
-                aliens.Aliens(
-                    x_alien + constants.ALIEN_HITBOX * (i + 1),
-                    y_alien,
-                    vx_alien,
-                    bullet,
-                    False,
-                    0.55 - constants.ALIEN_HITBOX * i,
-                    constants.ALIEN_HITBOX * i,
-                    player,
-                    self.tally,
-                )
-            ]
-
-        for i in range(12):
-            aliens_arr += [
-                aliens.Aliens(
-                    x_alien + constants.ALIEN_HITBOX * (i + 1),
-                    y_alien - constants.ALIEN_HITBOX,
-                    vx_alien,
-                    bullet,
-                    False,
-                    0.55 - constants.ALIEN_HITBOX * i,
-                    constants.ALIEN_HITBOX * i,
-                    player,
-                    self.tally,
-                )
-            ]
 """

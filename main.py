@@ -22,9 +22,9 @@ def main():
     leaderBoardManager = (
         leaderboard.LeaderBoardManager()
     )  # Initialise LeaderBoard Manager
-    tally = score.ScoreBoard()  # create a ScoreBoard object
+    scoreBoard = score.ScoreBoard()  # create a ScoreBoard object
     level = 0
-    selected_player = 0
+    player_number = 0
 
     # Canvas
     stddraw.setCanvasSize(1000, 1000)  # Set the canvas size to 1000 x 1000
@@ -42,7 +42,7 @@ def main():
         if stddraw.hasNextKeyTyped():  # check if a key is pressed
             key = stddraw.nextKeyTyped()
             if key in ["1", "2", "3", "4"]:
-                selected_player = key
+                player_number = key
 
                 tunes.play = False  # end the music
                 stddraw.clear()  # clear the title screen
@@ -57,7 +57,7 @@ def main():
     # Create a GameManager instance, pass in inital alient velocity, tally object and selected player parameters
     alien_velocity_initial = 0.0005
     gameManager = gamemanager.GameManager(
-        alien_velocity_initial, tally, selected_player
+        alien_velocity_initial, scoreBoard, player_number
     )
     alien_velocity = alien_velocity_initial
 
@@ -73,7 +73,7 @@ def main():
             # The level has ended. Adjust parameters like level value and alien speed.
 
             alien_velocity = alien_velocity + 0.0008  # increase the speed of the alien
-            gameManager.alien_velocity = (
+            gameManager._alien_velocity = (
                 alien_velocity  # update the value for the object
             )
             level += 1  # increase the level
@@ -87,7 +87,7 @@ def main():
         elif game_state == "game_over":
 
             # Reset Alien Speed
-            gameManager.alien_velocity = alien_velocity_initial 
+            gameManager._alien_velocity = alien_velocity_initial 
             alien_velocity  = alien_velocity_initial
             # Reset Canvas Parameters
             stddraw.setPenColor(stddraw.WHITE)
@@ -95,7 +95,7 @@ def main():
 
             # Reset The Level, Score and Player Lives
             level = 0
-            tally.score = 0
+            scoreBoard.score = 0
             gameManager.player_lives = 3
 
         # If the game has ended, exit the game loop

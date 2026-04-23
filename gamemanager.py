@@ -2,77 +2,71 @@ import stddraw  # type: ignore
 import stdaudio  # type: ignore
 import shooter, math, aliens, random, clock, bombs, constants, bunkers, leaderboard, threading, entitymanager
 
+# TODO Remove
+import stdio #type: ignore
+
 
 def play_gameover():
     stdaudio.playFile("./Assets/audio/gameover")
 
 
 class GameManager:  # class that defines the current instance of the game | Implemeted by James Bam and Robert Van Woudenberg
-    def __init__(self, v, tally, player):
-        self.alien_velocity = v  # speed of the alien
-        self.tally = tally  # score
-        self.selected_player = player
+    def __init__(self, velocity, score_board, player_number):
+        self._alien_velocity = velocity  # speed of the alien
+        self._score_board = score_board  # score
+        self._player_number = player_number
         self.player_lives = 3
+        self._player_hit = False
 
     def play_game(self):
 
         # -- INITIALISATION
 
-        time_shot = clock.Clock(
-            0
-        )  # create a clock object to track the time between bullets shot
-        time = clock.Clock(0)  # create a clock object to track the game time
+        # create a clock object to track the time between bullets shot
+        shooting_clock = clock.Clock(0)
+        # create a clock object to track the game time
+        clock_main = clock.Clock(0)  
 
-        leaderBoardManager = leaderboard.LeaderBoardManager()
-        entityManager = entitymanager.EntityManager(24, 2, self)
+        bullets = []  # create an array of bullet objects as an empty array
 
-        # Player Initial Parameters
-        x = 0.5  # starting x position for shooter
-        vx = 0  # starting velocity of shooter in the x direction
-        angle = math.pi / 2  # starting angle of turret
-        av = 0  # starting angular velocity of turret
-        bullet = []  # create an array of bullet objects as an empty array
+        # Create a Shooter (player) instance
         player = shooter.Shooter(
-            x, vx, angle, av, bullet, time_shot
-        )  # create a Shooter object with the initial values specified above
+            0.5, # Initial x Position
+            0, # Initial Velocity
+            bullets, 
+            shooting_clock # TODO Delete, localise to shooter.py
+        )
 
+        # Create LeaderBoard Manager and Entity Managers
+        leaderBoardManager = leaderboard.LeaderBoardManager()
+        entityManager = entitymanager.EntityManager(24, 2, self, clock_main, player)
 
-
-        # Alien Initial Parameters
-        x_alien = 0.1  # starting alien position
-        y_alien = 0.9  # starting alien position
-        vx_alien = (
-            self.alien_velocity
-        )  # set the initial alien velocity to that of the game instance
-        aliens_arr = []  # inintialise an empty array to store the aliens
-
+        # Spawn The Aliens TODO Move this somewhere else
         aliens_arr = entityManager.spawn_aliens()
 
-        # Pick a random alien and drop an initial bomb.
-        # Game loop will throw and error if bomb is not
-        # initially defined.
-        random_alien = aliens_arr[random.randrange(0, 24)]
-        bomb = bombs.Bomb(random_alien.x, random_alien.y, player.x)
-
         # Spawn Bunkers
-        bunker1 = bunkers.Bunker(0.2, 0.4, 3, bullet, bomb, aliens_arr)
-        bunker2 = bunkers.Bunker(0.8, 0.4, 3, bullet, bomb, aliens_arr)
+        #bunker1 = bunkers.Bunker(0.2, 0.4, 3, bullets, bombs, aliens_arr)
+        #bunker2 = bunkers.Bunker(0.8, 0.4, 3, bullets, bombs, aliens_arr)
 
         boss_spawned = False
 
         # We don't want the displayed highscore to change while we play the game,
         # so we get it before the game starts, so the display stays constant while
         # the player played the game.
-        player_highscore = leaderBoardManager.get_score(self.selected_player)
+        player_highscore = leaderBoardManager.get_score(self._player_number)
 
         # -- MAIN GAME LOOP
 
         while True:
 
+            #stdio.writeln(str(shooting_clock.get_time()) + " | " + str(clock_main.get_time()))
+
             # Update Time and Bunker States
-            time.updateTime()  # add to the time for the game time
-            time_shot.updateTime()  # add to the time for the time between shots
+            clock_main.updateTime()  # add to the time for the game time
+            shooting_clock.updateTime()  # add to the time for the time between shots
             stddraw.clear(stddraw.BLACK)
+
+            entityManager.manage_bombing()
 
             # TODO ENTITY MANAGER
 
@@ -85,51 +79,35 @@ class GameManager:  # class that defines the current instance of the game | Impl
             stddraw.text(
                 0.2,
                 0.95,
-                f"Player {self.selected_player} Selected. Highscore: {player_highscore}",
+                f"Player {self._player_number} Selected. Highscore: {player_highscore}",
             )
-
-            self.tally.update_score(self.selected_player)  # update the score board
-            bomb.set_shooter_x(player.x)
-            bomb_hit = bomb.bomb_update()  # update the bombs
             
             # Draw Count of Player's Lives
             stddraw.text(0.1, 0.9, "Lives: " + str(self.player_lives)) 
 
             # Spawn a Boss Alien after a specified time has passed.
             #
-            if random.randrange(50) == 0 and time.time > 500 and not boss_spawned:
+            """
+            if random.randrange(50) == 0 and clock_main.time > 500 and not boss_spawned:
                 boss = aliens.Boss(
                     random.random(),
                     random.uniform(0.5, 1),
-                    vx_alien + 0.002,
-                    bullet,
+                    0.005 + 0.002,
+                    bullets,
                     False,
                     0,
                     0,
                     player,
-                    self.tally,
+                    self._score_board,
                     5,
                 )
                 boss_spawned = True
-
+            """
             # Check If All Aliens have been killed.
             #
             all_aliens_destroyed = True
             for alien in aliens_arr:
                 all_aliens_destroyed = all_aliens_destroyed and alien.dead
-
-            random_alien = aliens_arr[random.randrange(0, 24)]  # choose a random alien
-
-            # If Chosen Alien Is Dead, Try Again
-            while random_alien.dead and not all_aliens_destroyed:
-                random_alien = aliens_arr[random.randrange(0, 24)]
-
-            # Drop a bomb from the selected Alien.
-            # Chance is random, new roll each game loop.
-            if random.randrange(100) == 0 and bomb.y < 0:
-                bomb.y = random_alien.y
-                bomb.x = random_alien.x
-                bomb.x_shooter = player.x  # We Give the Bomb Our Players Position
 
             # -- Update Game State
 
@@ -149,7 +127,7 @@ class GameManager:  # class that defines the current instance of the game | Impl
 
             # Has the player been hit
             # by a bomb?
-            if bomb_hit:
+            if self._player_hit:
                 if self.update_game_over():
                     self.end_game()
                     stddraw.show(1000)
@@ -185,6 +163,9 @@ class GameManager:  # class that defines the current instance of the game | Impl
             return False
         else:
             return True
+        
+    def player_hit(self):
+        self._player_hit = True
 
             
 

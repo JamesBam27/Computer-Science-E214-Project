@@ -5,7 +5,7 @@ import constants
 
 class Aliens:  # implemented by James Bam
     def __init__(
-        self, x, y, v_x, bullet, dead, right_bound, left_bound, shooter, tally
+        self, x, y, v_x, bullet, dead, right_bound, left_bound, tally
     ):
         self.x = x  # set the x position
         self.y = y  # set the y position
@@ -14,7 +14,7 @@ class Aliens:  # implemented by James Bam
         self.dead = dead  # set if the aliens is dead or alive
         self.right_bound = right_bound  # set the right boundary for the alien
         self.left_bound = left_bound  # set the left boundary for the alien
-        self.shooter = shooter  # set the shooter object
+        # SHOOTER WAS HERE
         self.tally = tally  # set the score
         self.alien = Picture("./Assets/img/Alien.png")
 
@@ -47,7 +47,7 @@ class Aliens:  # implemented by James Bam
                 self.tally.increment()
 
                 
-            """
+            
             
         # If an alive alien hits the floor or the player, remove a life or end the game
         if (
@@ -59,6 +59,8 @@ class Aliens:  # implemented by James Bam
         ) and not self.dead:
             self.kill_alien(True)
             return True
+
+            """
 
         # draw the alien only if it is alive
         if not self.dead:

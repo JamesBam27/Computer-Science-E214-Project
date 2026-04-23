@@ -13,25 +13,37 @@ import constants
 
 class Bomb:  # Implemented by James Bam
 
-    def __init__(self, y, x, shooter_x):
-        self.y = y  # set the y coordinate
-        self.x = x  # set the x coordinate
-        self.shooter_x = shooter_x
-        self.bomb = Picture("./Assets/img/bomb2.png")  # set the picture of the bomb
-
-    def kill_bomb(self):
-        self.y = -1
-    def set_shooter_x(self,x):
-        self.shooter_x = x
+    def __init__(self, x, y):
+        self.y = y  # y coord
+        self.x = x  # x coord
+        self.alive = True
+        self.img = Picture("./Assets/img/bomb2.png")  # set the picture of the bomb
 
     def bomb_update(self):  # move the bomb and check if it has hit a player
-        velocity_y = -0.01  # set the velocity
-        self.y = self.y + velocity_y  # move it down
-        stddraw.picture(self.bomb, self.x, self.y)  # draw the bomb
-        if (
-            abs(self.shooter_x - self.x) < constants.BOMB_HITBOX
-            and abs(constants.SHOOTER_Y - self.y) < constants.BOMB_HITBOX
-        ):  # check if it got too close the the shooter and if it did take a life
-            self.y = -1
-            return True
-        return False
+        self.y = self.y + constants.BOMB_SPEED  # move it down
+        
+    
+    def update_position(self):
+        
+        # Update Y Position
+        self.y = self.y + constants.BOMB_SPEED 
+
+        # Draw Bomb
+        stddraw.picture(self.img, self.x, self.y)
+
+    def check_collision(self, player_position_x):
+        # Check if Bomb Intersects Player Hitbox
+        # Move it out of the play area, and set as dead
+
+        player_collision = abs(player_position_x - self.x) < constants.BOMB_HITBOX and abs(constants.SHOOTER_Y - self.y) < constants.BOMB_HITBOX
+        bottom_bound_crossed = self.y < constants.BOTTOM_BOUND
+
+        if player_collision or bottom_bound_crossed:
+            self.y = 2
+            self.alive = False
+
+            if player_collision:
+                return True
+            else:
+                return False
+

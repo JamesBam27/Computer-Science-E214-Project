@@ -5,6 +5,12 @@ import math
 import threading
 import constants
 
+# Initial Player Turret Values
+initial_turret_angle = math.pi / 2
+initial_turret_angular_vel = 0
+
+# Speed at which Player Moves
+player_velocity = 0.005
 
 # Implemented by Robert Van Woudenberg
 class Bullet:  # class to represent a bullet shot by the player
@@ -40,16 +46,16 @@ def play_sound():  # function that plays the bullet sound
 
 class Shooter:  # class that defines the player
 
-    def __init__(self, x, vx, a, av, bullet, time):
+    def __init__(self, x, vx, bullet, time):
         self.x = x  # set the x position
-        self.vx = vx  # set the x velocity
-        self.angle_v = av  # set the angular velocity
-        self.angle = a  # set the angle of the turret
-        self.bullet = bullet  # set the array of bullets currently on the screen
-        self.time = (
-            time  # set the Clock object of the timeComputer-Science-E214-Project
+        self.velocity = vx  # set the x velocity
+        self._turret_angular_vel = initial_turret_angular_vel  # set the angular velocity
+        self._turret_angle = initial_turret_angle  # set the angle of the turret
+        self._bullets = bullet  # set the array of bullets currently on the screen
+        self._clock_main = (
+            time  # set the Clock object of the time
         )
-        self.ship = Picture(
+        self.img = Picture(
             "./Assets/img/ship2.png"
         )  # create the picture object of the shooter
         self.vx_positive = 0.005  # set the positive x velocity
@@ -63,61 +69,61 @@ class Shooter:  # class that defines the player
         if stddraw.hasNextKeyTyped():  # check if a key has been typed
             key = stddraw.nextKeyTyped()
             if key == "d":
-                self.vx = self.vx_positive  # move right
+                self.velocity = player_velocity  # move right
             else:
                 if key == "a":
-                    self.vx = self.vx_negative  # move left
+                    self.velocity = -player_velocity  # move left
                 else:
                     if key == "s":
-                        self.vx = 0  # stop
+                        self.velocity = 0  # stop
                     else:
                         if key == "x":
                             return True  # close the program
                         else:
                             if key == " " and (
-                                self.time.time > 20
+                                self._clock_main.time > 20
                             ):  # shoot the bullet only after a certain amount of time from the last one
                                 threading.Thread(
                                     target=play_sound
                                 ).start()  # play the bullet sound
-                                self.time.time = 0  # reset the shot timer
-                                self.bullet += [
+                                self._clock_main.time = 0  # reset the shot timer
+                                self._bullets += [
                                     Bullet(
-                                        self.x, 0.15, self.angle, constants.BULLET_SPEED
+                                        self.x, 0.15, self._turret_angle, constants.BULLET_SPEED
                                     )
                                 ]  # add a bullet to the bullet array
                             else:
                                 if key == "e":
-                                    self.angle_v = (
+                                    self._turret_angular_vel = (
                                         self.angle_v_negative
                                     )  # move the turret anticlockwise
                                 else:
                                     if key == "q":
-                                        self.angle_v = (
+                                        self._turret_angular_vel = (
                                             self.angle_v_positive
                                         )  # move the turret clockwise
                                     else:
                                         if key == "w":
-                                            self.angle_v = 0  # stop the turret
+                                            self._turret_angular_vel = 0  # stop the turret
 
-        self.angle = self.angle + self.angle_v  # move the turret
+        self._turret_angle = self._turret_angle + self._turret_angular_vel  # move the turret
         if (
-            not 0 < self.angle < math.pi
+            not 0 < self._turret_angle < math.pi
         ):  # if the turret has an angle less than zero and greater than 90 degrees turn the turret around
-            self.angle_v = -self.angle_v
-        curser(self.x, constants.SHOOTER_Y, self.angle)  # update and draw the curser
-        for i in self.bullet[:]:  # check all the bullets
+            self._turret_angular_vel = -self._turret_angular_vel
+        curser(self.x, constants.SHOOTER_Y, self._turret_angle)  # update and draw the curser
+        for i in self._bullets[:]:  # check all the bullets
             if not (
                 constants.LEFT_BOUND < i.x < constants.RIGHT_BOUND
                 and constants.BOTTOM_BOUND < i.y < constants.TOP_BOUND
             ):  # if they are off the screen remove the alien for the list
-                self.bullet.remove(i)
+                self._bullets.remove(i)
             else:
                 i.shoot()  # update the position and draw all the bullets
 
         if (
             self.x < constants.LEFT_BOUND or self.x > constants.RIGHT_BOUND
         ):  # if the shooter reaches the end of the screen turn around
-            self.vx = -self.vx
-        self.x = self.x + self.vx  # move the shooter
-        stddraw.picture(self.ship, self.x, constants.SHOOTER_Y)  # draw the shooter
+            self.velocity = -self.velocity
+        self.x = self.x + self.velocity  # move the shooter
+        stddraw.picture(self.img, self.x, constants.SHOOTER_Y)  # draw the shooter

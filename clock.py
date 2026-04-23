@@ -10,3 +10,6 @@ class Clock:  # Implemented by James Bam
     # Add 1 to time value
     def updateTime(self):
         self.time += 1
+
+    def get_time(self):
+        return self.time
