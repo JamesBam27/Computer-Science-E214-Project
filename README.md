@@ -1,7 +1,0 @@
-﻿# Computer-Science-E214-Project
-Links to resources:
-shooter: [https://opengameart.org/](https://opengameart.org/content/asteroids-game-sprites-atlas)
-Aliens: https://toppng.com/free-image/space-invaders-alien-space-invaders-alien-sprite-PNG-free-PNG-Images_219304
-bunkers: https://upload.wikimedia.org/wikipedia/commons/3/3e/Space_invaders_character_2.jpeg
-Boss: https://toppng.com/show_download/186805/invader-space-invaders-png-gif
-Music and sound effects: gameover :(https://pixabay.com/sound-effects/film-special-effects-game-over-arcade-6435/)
