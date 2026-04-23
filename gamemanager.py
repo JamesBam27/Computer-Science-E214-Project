@@ -79,7 +79,7 @@ class GameManager:  # class that defines the current instance of the game | Impl
         # Game loop will throw and error if bomb is not
         # initially defined.
         random_alien = aliens_arr[random.randrange(0, 24)]
-        bomb = bombs.Bomb(random_alien.x, random_alien.y, player.x, constants.SHOOTER_Y)
+        bomb = bombs.Bomb(random_alien.x, random_alien.y, player.x)
 
         # Spawn Bunkers
         bunker1 = bunkers.Bunker(0.2, 0.4, 3, bullet, bomb, aliens_arr)
@@ -113,6 +113,7 @@ class GameManager:  # class that defines the current instance of the game | Impl
             )
 
             self.tally.update_score(self.selected_player)  # update the score board
+            bomb.set_shooter_x(player.x)
             bomb_hit = bomb.bomb_update()  # update the bombs
             stddraw.text(
                 0.1, 0.9, "Lives: " + str(self.player_lives)

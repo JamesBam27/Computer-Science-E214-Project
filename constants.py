@@ -8,7 +8,7 @@ SHOOTER_Y = 0.15
 
 # Hitboxes
 ALIEN_HITBOX = 0.05
-BOMB_HITBOX = 0.025
+BOMB_HITBOX = 0.05
 BUNKER_HITBOX = 0.1
 
 # Screen bounds
