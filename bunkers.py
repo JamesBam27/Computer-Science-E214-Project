@@ -18,7 +18,7 @@ class Bunker:  # implemented by James Bam
         self.bunker = Picture("./Assets/img/bunker.png")
 
     def update_bunker(self):
-
+        #Check if a bullet, bomb or alien has hit the bunker. Kill the entity and if heath <=0 kill the bunker
         if self.health > 0:
             for i in self.bullet:
                 if abs(i.x - self.x) <= constants.BUNKER_HITBOX and abs(i.y - self.y) <= constants.BUNKER_HITBOX:
