@@ -1,6 +1,6 @@
 import stddraw  # type: ignore
 import stdaudio  # type: ignore
-import shooter, math, aliens, random, clock, bombs, constants, bunkers, leaderboard, threading
+import shooter, math, aliens, random, clock, bombs, constants, bunkers, leaderboard, threading, entitymanager
 
 
 def play_gameover():
@@ -24,6 +24,7 @@ class GameManager:  # class that defines the current instance of the game | Impl
         time = clock.Clock(0)  # create a clock object to track the game time
 
         leaderBoardManager = leaderboard.LeaderBoardManager()
+        entityManager = entitymanager.EntityManager(24, 2, self)
 
         # Player Initial Parameters
         x = 0.5  # starting x position for shooter
@@ -35,6 +36,8 @@ class GameManager:  # class that defines the current instance of the game | Impl
             x, vx, angle, av, bullet, time_shot
         )  # create a Shooter object with the initial values specified above
 
+
+
         # Alien Initial Parameters
         x_alien = 0.1  # starting alien position
         y_alien = 0.9  # starting alien position
@@ -43,37 +46,7 @@ class GameManager:  # class that defines the current instance of the game | Impl
         )  # set the initial alien velocity to that of the game instance
         aliens_arr = []  # inintialise an empty array to store the aliens
 
-        # Spawn All 24 Aliens, in 2 rows of 12
-
-        for i in range(12):
-            aliens_arr += [
-                aliens.Aliens(
-                    x_alien + constants.ALIEN_HITBOX * (i + 1),
-                    y_alien,
-                    vx_alien,
-                    bullet,
-                    False,
-                    0.55 - constants.ALIEN_HITBOX * i,
-                    constants.ALIEN_HITBOX * i,
-                    player,
-                    self.tally,
-                )
-            ]
-
-        for i in range(12):
-            aliens_arr += [
-                aliens.Aliens(
-                    x_alien + constants.ALIEN_HITBOX * (i + 1),
-                    y_alien - constants.ALIEN_HITBOX,
-                    vx_alien,
-                    bullet,
-                    False,
-                    0.55 - constants.ALIEN_HITBOX * i,
-                    constants.ALIEN_HITBOX * i,
-                    player,
-                    self.tally,
-                )
-            ]
+        aliens_arr = entityManager.spawn_aliens()
 
         # Pick a random alien and drop an initial bomb.
         # Game loop will throw and error if bomb is not
@@ -103,8 +76,8 @@ class GameManager:  # class that defines the current instance of the game | Impl
 
             # TODO ENTITY MANAGER
 
-            bunker1.update_bunker()
-            bunker2.update_bunker()
+            #bunker1.update_bunker()
+            #bunker2.update_bunker()
 
             # Display Selected Player and Highscore
             stddraw.setPenColor(stddraw.WHITE)
@@ -201,8 +174,10 @@ class GameManager:  # class that defines the current instance of the game | Impl
                         self.end_game()  # Display the gameover message
                         stddraw.show(1000)
                         return "game_over"
+                        
 
             stddraw.show(10)
+
     #check if the player has enough lives: If they don't remove a life. If they do return true to end the game
     def update_game_over(self):
         if self.player_lives > 0:
@@ -210,6 +185,8 @@ class GameManager:  # class that defines the current instance of the game | Impl
             return False
         else:
             return True
+
+            
 
     # Display Game over in red on the screen
     def end_game(self):

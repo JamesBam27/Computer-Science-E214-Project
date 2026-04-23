@@ -87,7 +87,7 @@ def main():
         elif game_state == "game_over":
 
             # Reset Alien Speed
-            gameManager.alien_velocity = alien_velocity_initial
+            gameManager.alien_velocity = alien_velocity_initial 
             alien_velocity  = alien_velocity_initial
             # Reset Canvas Parameters
             stddraw.setPenColor(stddraw.WHITE)

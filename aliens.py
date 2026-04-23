@@ -32,6 +32,7 @@ class Aliens:  # implemented by James Bam
             self.y = self.y - 0.05
         self.x = self.x + self.v_x  # move the alien in the x direction
 
+        """
         # check all the bullets
         for i in self.bullet:
             # if bullet too close to the alien kill the alien
@@ -45,6 +46,9 @@ class Aliens:  # implemented by James Bam
                 self.kill_alien()
                 self.tally.increment()
 
+                
+            """
+            
         # If an alive alien hits the floor or the player, remove a life or end the game
         if (
             self.y < constants.BOTTOM_BOUND
