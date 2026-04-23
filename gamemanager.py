@@ -198,7 +198,7 @@ class GameManager:  # class that defines the current instance of the game | Impl
                         return "game_over"
 
             stddraw.show(10)
-
+    #check if the player has enough lives: If they don't remove a life. If they do return true to end the game
     def update_game_over(self):
         if self.player_lives > 0:
             self.player_lives -= 1
