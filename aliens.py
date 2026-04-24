@@ -4,33 +4,23 @@ import constants
 
 
 class Aliens:  # implemented by James Bam
-    def __init__(
-        self, x, y, v_x, bullet, dead, right_bound, left_bound, tally
-    ):
+    def __init__(self, x, y, velocity, bullet, dead, right_bound, left_bound, score_board):
         self.x = x  # set the x position
         self.y = y  # set the y position
-        self.v_x = v_x  # set the x velocity
+        self.velocity = velocity  # set the x velocity
         self.bullet = bullet  # set the array of bullets
         self.dead = dead  # set if the aliens is dead or alive
+        self.health = 1
         self.right_bound = right_bound  # set the right boundary for the alien
         self.left_bound = left_bound  # set the left boundary for the alien
         # SHOOTER WAS HERE
-        self.tally = tally  # set the score
-        self.alien = Picture("./Assets/img/Alien.png")
-
-    def kill_alien(self, game_over=False):
-        self.x = 1
-        self.y = 1
-        self.v_x = 0  # stop the alien
-        self.dead = True
+        self._score_board = score_board  # set the score
+        self.img = Picture("./Assets/img/Alien.png")
 
     def update_alien(self):
 
         # if the alien reaches its boundary turn it around and move it down
-        if not self.left_bound <= self.x <= constants.RIGHT_BOUND - self.right_bound:
-            self.v_x = -self.v_x
-            self.y = self.y - 0.05
-        self.x = self.x + self.v_x  # move the alien in the x direction
+        
 
         """
         # check all the bullets
@@ -46,47 +36,58 @@ class Aliens:  # implemented by James Bam
                 self.kill_alien()
                 self.tally.increment()
 
-                
-            
-            
-        # If an alive alien hits the floor or the player, remove a life or end the game
-        if (
-            self.y < constants.BOTTOM_BOUND
-            or (
-                abs(self.shooter.x - self.x) < constants.ALIEN_HITBOX
-                and abs(constants.SHOOTER_Y - self.y) < constants.ALIEN_HITBOX
-            )
-        ) and not self.dead:
-            self.kill_alien(True)
-            return True
-
             """
 
-        # draw the alien only if it is alive
-        if not self.dead:
-            stddraw.picture(self.alien, self.x, self.y)
-        return False
+    def update_position(self):
+
+        if not self.left_bound <= self.x <= constants.RIGHT_BOUND - self.right_bound:
+            self.velocity = -self.velocity
+            self.y = self.y - constants.ALIEN_ADVANCE_DISTANCE
+
+        self.x = self.x + self.velocity  # move the alien in the x direction
+
+        stddraw.picture(self.img, self.x, self.y)
+
+    def check_collision(self, player_position_x):
+
+        bottom_bound_crossed = self.y < constants.BOTTOM_BOUND
+        player_hit = abs(player_position_x - self.x) < constants.ALIEN_HITBOX and abs(constants.SHOOTER_Y - self.y) < constants.ALIEN_HITBOX
+
+        if bottom_bound_crossed or player_hit:
+            self.x = 2
+            self.dead = True
+
+            return player_hit
+        
+    def check_bullets(self, bullets):
+
+        for bullet in bullets:
+
+            bullet_hit = (abs(self.x - bullet.x) < constants.ALIEN_HITBOX) and (abs(self.y - bullet.y) < constants.ALIEN_HITBOX)
+
+            if bullet_hit and not bullet._hit:
+                bullet.destroy_bullet()
+                
+                self.health -= 1
+
+    def check_health(self, game_manager):
+
+        if self.health <= 0:
+            self.dead = True
+            game_manager.alien_destroyed()
 
 
 # Inherits from the alien class:
 # same as normal aliens except the boss has multiple lives and
 # has to be hit a certain amout of times to die.
 class Boss(Aliens):
-    def __init__(
-        self, x, y, v_x, bullet, blown, right_bound, left_bound, shooter, tally, health
-    ):
+    def __init__(self, x, y, velocity, bullet, dead, health, right_bound, left_bound, score_board):
         super().__init__(
-            x, y, v_x, bullet, blown, right_bound, left_bound, shooter, tally
+            self, x, y, velocity, bullet, dead, right_bound, left_bound, score_board
         )  # call the parents constructor
+        self.change_img()
         self.health = health
-        self.change_alien()
 
     # have a diffrent picture
-    def change_alien(self):
-        self.alien = Picture("./Assets/img/Alien2.png")
-
-    def kill_alien(self, game_over=False):
-        if self.health > 0 and not game_over:
-            self.health -= 1
-        else:
-            super().kill_alien()
+    def change_img(self):
+        self.img = Picture("./Assets/img/Alien2.png")

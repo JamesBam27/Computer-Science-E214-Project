@@ -18,11 +18,7 @@ class Bomb:  # Implemented by James Bam
         self.x = x  # x coord
         self.alive = True
         self.img = Picture("./Assets/img/bomb2.png")  # set the picture of the bomb
-
-    def bomb_update(self):  # move the bomb and check if it has hit a player
-        self.y = self.y + constants.BOMB_SPEED  # move it down
         
-    
     def update_position(self):
         
         # Update Y Position
@@ -32,16 +28,19 @@ class Bomb:  # Implemented by James Bam
         stddraw.picture(self.img, self.x, self.y)
 
     def check_collision(self, player_position_x):
-        # Check if Bomb Intersects Player Hitbox
-        # Move it out of the play area, and set as dead
 
+        # Check if Bomb Intersects Player Hitbox, Check if Bomb has Crossed The Lower Bound
         player_collision = abs(player_position_x - self.x) < constants.BOMB_HITBOX and abs(constants.SHOOTER_Y - self.y) < constants.BOMB_HITBOX
         bottom_bound_crossed = self.y < constants.BOTTOM_BOUND
 
+        # If the Bomb has hit a Player or a Boundary, we Remove it from play
+        # and flag it as dead
         if player_collision or bottom_bound_crossed:
             self.y = 2
             self.alive = False
 
+            # We tell the GameManager that the Player
+            # was hit by a Bomb
             if player_collision:
                 return True
             else:

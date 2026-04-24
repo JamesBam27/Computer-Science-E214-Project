@@ -68,6 +68,10 @@ class GameManager:  # class that defines the current instance of the game | Impl
 
             entityManager.manage_bombing()
 
+            entityManager.update_aliens()
+
+            entityManager.update_bullets()
+
             # TODO ENTITY MANAGER
 
             #bunker1.update_bunker()
@@ -116,7 +120,7 @@ class GameManager:  # class that defines the current instance of the game | Impl
             # Call Shooter Update
             # If the function returns True, the "x" key
             # Has Been Pressed, and we quit the game.
-            if player.update_shooter():
+            if player.update_shooter(entityManager):
                 return "game_quit"
 
             # Player Has Beaten The Level
@@ -137,6 +141,7 @@ class GameManager:  # class that defines the current instance of the game | Impl
             # Check if it is Alive,
             # Check if it has hit anything,
             # Update its position.
+            """
             if boss_spawned:
                 if boss.update_alien():
                     if self.update_game_over():
@@ -144,7 +149,7 @@ class GameManager:  # class that defines the current instance of the game | Impl
                         stddraw.show(1000)
                         return "game_over"
                     boss_spawned = False
-
+            """
             # Check Whether An Alien Has Killed The Player
             for alien in aliens_arr:
                 if alien.update_alien():  # Has the alien hit the player?
@@ -164,8 +169,12 @@ class GameManager:  # class that defines the current instance of the game | Impl
         else:
             return True
         
-    def player_hit(self):
+    def damage_player(self):
+        # TODO We need to remove lives from the player here
         self._player_hit = True
+
+    def alien_destroyed(self):
+        self._score_board.increment()
 
             
 

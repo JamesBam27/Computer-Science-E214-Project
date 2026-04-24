@@ -15,6 +15,7 @@ class EntityManager():
         self._last_bomb_time = 0
         self._bombs = []
         self._player_ref = player_reference
+        self._bullets = []
 
         self.spawn_aliens()
  
@@ -29,7 +30,7 @@ class EntityManager():
         alien_x_init = 0.1
         alien_y_init = 0.9
 
-        alien_v_init = 0
+        alien_v_init = 0.0005
 
         bullet = shooter.Bullet(0, 0, 0, 0)
 
@@ -59,8 +60,6 @@ class EntityManager():
     def manage_bombing(self):
         time_delta = self._clock_manager.get_time() - self._last_bomb_time
 
-        #stdio.writeln(time_delta)
-
         if time_delta >= self._bomb_interval:
             self._last_bomb_time = self._clock_manager.get_time()
             self.spawn_bomb()
@@ -77,7 +76,7 @@ class EntityManager():
 
         self._aliens = aliens_alive
 
-        alien_random = self._aliens[random.randrange(0, self._alien_count)]
+        alien_random = self._aliens[random.randrange(0, len(self._aliens))]
 
         bomb = bombs.Bomb(alien_random.x, alien_random.y)
 
@@ -95,14 +94,34 @@ class EntityManager():
                 player_hit = bomb.check_collision(self._player_ref.x)
 
                 if player_hit:
-                    self._gamemanager.player_hit()
+                    self._gamemanager.damage_player()
 
 
-    def update_aliens(self, aliens):
-        pass
+    def update_aliens(self):
+        
+        for alien in self._aliens[:]:
+            if alien.dead:
+                self._aliens.remove(alien)
+            else:
+                alien.update_position()
+                player_hit = alien.check_collision(self._player_ref.x)
+                alien.check_bullets(self._bullets)
+                alien.check_health(self._gamemanager)
 
-    def update_bullets(self, bullets):
-        pass
+                if player_hit:
+                    self._gamemanager.damage_player()
+
+
+    def update_bullets(self):
+
+        for bullet in self._bullets[:]:
+            if bullet._hit:
+                self._bullets.remove(bullet)
+
+            bullet.update_position()
+
+    def track_bullet(self, bullet):
+        self._bullets.append(bullet)
 
     def update_boss(self, boss):
         pass
